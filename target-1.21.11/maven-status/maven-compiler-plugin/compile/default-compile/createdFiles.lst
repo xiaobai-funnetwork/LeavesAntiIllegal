@@ -1,0 +1,14 @@
+dev\leavesantiillegal\scanner\LoadedContainerScanner.class
+dev\leavesantiillegal\scanner\OfflinePlayerDataScanner$PlayerDataRoot.class
+dev\leavesantiillegal\ItemChecker$ViolationHandler.class
+dev\leavesantiillegal\scanner\OfflinePlayerDataScanner$PlayerDataFile.class
+dev\leavesantiillegal\command\AntiIllegalCommand.class
+dev\leavesantiillegal\ItemChecker.class
+dev\leavesantiillegal\scanner\NbtItemChecker.class
+dev\leavesantiillegal\scanner\LoadedContainerScanner$ChunkRef.class
+dev\leavesantiillegal\LeavesAntiIllegalPlugin.class
+dev\leavesantiillegal\listener\PlayerListener.class
+dev\leavesantiillegal\scanner\NbtItemChecker$NbtViolation.class
+dev\leavesantiillegal\listener\InventoryListener.class
+dev\leavesantiillegal\ItemChecker$CheckResult.class
+dev\leavesantiillegal\scanner\OfflinePlayerDataScanner.class

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LeavesAntiIllegal 2.0.0 架构、线程、构建与扩展文档">
+  <title>开发者文档 | LeavesAntiIllegal 2.0.0</title>
+  <link rel="icon" href="assets/leaves-logo.png">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+  <button class="nav-toggle" type="button" aria-label="打开目录" aria-controls="sidebar" aria-expanded="false">☰</button>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="index.html" aria-label="返回文档首页">
+      <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
+      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 2.0.0</span></span>
+    </a>
+    <div class="search-wrap">
+      <label for="doc-search">筛选本文档</label>
+      <input id="doc-search" type="search" placeholder="线程、NBT、构建…" autocomplete="off" data-doc-search>
+      <p class="search-result" data-search-result>共 13 个章节</p>
+    </div>
+    <nav aria-label="文档目录">
+      <a href="#contract">兼容契约</a>
+      <a href="#architecture">总体架构</a>
+      <a href="#threading">线程约束</a>
+      <a href="#lifecycle">生命周期</a>
+      <a href="#online">在线检测链</a>
+      <a href="#containers">已加载容器</a>
+      <a href="#offline">离线数据流水线</a>
+      <a href="#nbt">NBT 兼容层</a>
+      <a href="#rules">规则快照</a>
+      <a href="#source-map">源码索引</a>
+      <a href="#build">构建与依赖</a>
+      <a href="#extension">扩展约束</a>
+      <a href="#verification">验证与发布</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html">文档首页</a><a href="server-owner.html">服主手册</a><a href="../README.md">README</a>
+    </div>
+  </aside>
+
+  <main class="page" id="top">
+    <header class="doc-header">
+      <div class="header-inner">
+        <p class="eyebrow">Engineering reference / Developer guide</p>
+        <h1>LeavesAntiIllegal 开发者文档</h1>
+        <p class="lede">说明从 Folia 调度模型迁移到 Leaves/Bukkit 后的模块边界、线程所有权、离线 NBT 写入协议和双版本构建方法。</p>
+        <div class="meta-strip" aria-label="技术基线">
+          <span class="meta-item ok">Leaves API 1.21.10 / 1.21.11</span>
+          <span class="meta-item">Java 21</span>
+          <span class="meta-item">Maven</span>
+          <span class="meta-item">Querz NBT 6.1</span>
+        </div>
+      </div>
+    </header>
+
+    <article class="content">
+      <div class="empty-search" data-empty-search>没有匹配的章节，请尝试类名、配置键或 NBT 字段。</div>
+
+      <section class="doc-section" id="contract">
+        <span class="section-kicker">01 / Compatibility</span>
+        <h2>兼容契约</h2>
+        <p>代码以 Leaves 1.21.10 API 为发布基线，同时通过 Maven profile 使用 Leaves 1.21.11 API 重新编译。线上产物不直接调用 Leaves 私有实现，只依赖 Bukkit/Paper 公开类型和 Bukkit 调度器。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>维度</th><th>约束</th><th>实现</th></tr></thead>
+            <tbody>
+              <tr><td>Java</td><td>运行与编译均为 21</td><td><code>maven.compiler.release=21</code></td></tr>
+              <tr><td>服务端</td><td>Leaves 1.21.10 / 1.21.11</td><td>默认 API 1.21.10，profile 覆盖到 1.21.11</td></tr>
+              <tr><td>线程</td><td>Bukkit 世界状态只在主线程访问</td><td><code>BukkitScheduler</code> sync task</td></tr>
+              <tr><td>离线 NBT</td><td>文件 I/O 不阻塞主线程</td><td>异步枚举、解析、备份、写回</td></tr>
+              <tr><td>插件标识</td><td>与旧 Folia 项目隔离</td><td><code>dev.leavesantiillegal</code> / <code>LeavesAntiIllegal</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning"><strong>不是 Folia 双平台插件</strong>移除 Folia 专用 scheduler 后，库存与区块访问采用单主线程假设。若要重新支持 Folia，应抽象调度后端并为每个实体/区块恢复所有权调度，不能把 <code>folia-supported</code> 加回描述文件就结束。</div>
+      </section>
+
+      <section class="doc-section" id="architecture">
+        <span class="section-kicker">02 / Architecture</span>
+        <h2>总体架构</h2>
+        <div class="flow" aria-label="插件数据流">
+          <div class="flow-step"><b>触发源</b><small>事件、定时任务、命令、低峰窗口</small></div>
+          <div class="flow-step"><b>数据适配</b><small>ItemStack / Inventory / CompoundTag</small></div>
+          <div class="flow-step"><b>规则判定</b><small>材料、附魔、耐久、堆叠、属性</small></div>
+          <div class="flow-step"><b>处置与审计</b><small>移除、通知、日志、备份、统计</small></div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><strong>ItemChecker</strong><span>在线 ItemStack 规则快照、递归库存清理与通知。</span></div>
+          <div class="metric"><strong>LoadedContainerScanner</strong><span>维护已加载区块索引，在主线程分批遍历库存。</span></div>
+          <div class="metric"><strong>OfflinePlayerDataScanner</strong><span>控制低峰调度、并发保护、文件提交和状态。</span></div>
+        </div>
+        <p><code>NbtItemChecker</code> 是离线格式适配器。它与 <code>ItemChecker</code> 读取同一份配置，但不在异步线程调用 Bukkit 实体/世界 API；构造时在主线程把材料与附魔注册表快照成普通集合。</p>
+      </section>
+
+      <section class="doc-section" id="threading">
+        <span class="section-kicker">03 / Threading</span>
+        <h2>线程所有权</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>操作</th><th>线程</th><th>原因</th></tr></thead>
+            <tbody>
+              <tr><td>玩家 Inventory / EnderChest / Cursor</td><td><span class="tag sync">主线程</span></td><td>Bukkit 活对象，不能并发访问。</td></tr>
+              <tr><td>World / Chunk / TileEntity / Entity</td><td><span class="tag sync">主线程</span></td><td>区块和实体生命周期归服务端主线程。</td></tr>
+              <tr><td>注册表快照、OP 与世界目录获取</td><td><span class="tag sync">主线程</span></td><td>避免在异步任务访问 Bukkit 全局状态。</td></tr>
+              <tr><td>目录枚举与 <code>.dat</code> 解析</td><td><span class="tag async">异步</span></td><td>文件系统和压缩 NBT 可能阻塞。</td></tr>
+              <tr><td>备份、临时文件、原子替换</td><td><span class="tag async">异步</span> <span class="tag file">文件锁域</span></td><td>按玩家 UUID 串行，避开主线程。</td></tr>
+              <tr><td>在线人数计数与保护表读取</td><td><span class="tag async">可跨线程</span></td><td>使用并发集合、volatile 快照与原子类型。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger"><strong>异步边界不可外扩</strong><code>OfflinePlayerDataScanner</code> 的异步批次只能操作路径、普通值对象、规则快照和 NBT。新增逻辑若需要玩家名、世界对象或 Bukkit 注册表，必须在 <code>prepareSweepOnMainThread()</code> 中先采集不可变快照。</div>
+      </section>
+
+      <section class="doc-section" id="lifecycle">
+        <span class="section-kicker">04 / Lifecycle</span>
+        <h2>启动、重载与关闭</h2>
+        <div class="flow" aria-label="插件启动流程">
+          <div class="flow-step"><b>读取配置</b><small>saveDefaultConfig + 规则快照</small></div>
+          <div class="flow-step"><b>注册入口</b><small>监听器、命令、Tab 补全</small></div>
+          <div class="flow-step"><b>标记在线 UUID</b><small>建立离线文件保护</small></div>
+          <div class="flow-step"><b>启动扫描器</b><small>玩家、容器、离线窗口任务</small></div>
+        </div>
+        <p><code>reloadPluginConfig()</code> 若从非主线程进入，会先调度回主线程。真正重载按“取消旧任务 → reloadConfig → 重建规则与保护时长 → 重启扫描器”顺序执行。</p>
+        <ul>
+          <li><code>onDisable()</code> 取消全部 BukkitTask、注销容器监听器并清空正在等待的离线文件。</li>
+          <li><code>ItemChecker</code> 通过 volatile 引用整体替换，事件处理始终看见完整快照。</li>
+          <li>离线扫描器停止后会把 <code>active</code> 和 <code>sweepRunning</code> 复位，正在处理的单文件依靠 finally 清理临时文件。</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="online">
+        <span class="section-kicker">05 / Online path</span>
+        <h2>在线检测链</h2>
+        <p><code>PlayerListener</code> 与 <code>InventoryListener</code> 提供低延迟阻断，周期任务提供最终一致性。两者都委托给同一个 <code>ItemChecker</code>，因此不会出现两套判定标准。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>入口</th><th>时机</th><th>处置</th></tr></thead>
+            <tbody>
+              <tr><td><code>EntityPickupItemEvent</code></td><td>玩家拾取</td><td>取消拾取、删除物品实体、发送原因。</td></tr>
+              <tr><td><code>InventoryClickEvent</code></td><td>点击槽位或光标</td><td>清空违规项并取消事件。</td></tr>
+              <tr><td><code>InventoryCreativeEvent</code></td><td>创造栏生成物品</td><td>清空 cursor 并取消事件。</td></tr>
+              <tr><td>Held / Interact / Swap / Drop</td><td>使用和转移物品</td><td>移除对应槽位或实体。</td></tr>
+              <tr><td>Join / Open / Close / Timer</td><td>全库存检查点</td><td>递归扫描背包、末影箱、cursor。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><code>shouldSkip()</code> 的顺序是 <code>antiillegal.bypass</code>、OP、UUID 白名单。容器扫描不绑定玩家，因此不会应用玩家 bypass；离线扫描显式排除 OP 和 UUID 白名单。</p>
+      </section>
+
+      <section class="doc-section" id="containers">
+        <span class="section-kicker">06 / Chunks</span>
+        <h2>已加载容器扫描</h2>
+        <p><code>LoadedContainerScanner</code> 在启动时快照所有已加载区块，此后通过 <code>ChunkLoadEvent</code> / <code>ChunkUnloadEvent</code> 维护 <code>ChunkRef</code> 集合。每个周期从游标位置抽取最多 <code>chunks-per-run</code> 个区块。</p>
+        <ol class="step-list">
+          <li><strong>检查区块仍加载</strong>已卸载引用立即从集合移除。</li>
+          <li><strong>读取 tile entities</strong>只处理实现 <code>InventoryHolder</code> 的方块状态。</li>
+          <li><strong>读取已加载实体</strong>要求 <code>chunk.isEntitiesLoaded()</code>，跳过玩家。</li>
+          <li><strong>按对象身份去重</strong>使用 <code>IdentityHashMap</code> 支持双箱等共享库存对象。</li>
+          <li><strong>委托 ItemChecker</strong>同步移除、通知并累加统计。</li>
+        </ol>
+        <div class="callout info"><strong>不触发区块加载</strong>扫描器只从已维护集合中取引用，并在访问前调用 <code>isChunkLoaded(x, z)</code>。不要把它改成遍历全世界坐标或直接调用可能强制加载的 API。</div>
+      </section>
+
+      <section class="doc-section" id="offline">
+        <span class="section-kicker">07 / Offline pipeline</span>
+        <h2>离线数据流水线</h2>
+        <div class="flow" aria-label="离线文件扫描流程">
+          <div class="flow-step"><b>窗口检查</b><small>异步，每 60 秒，核对日期与人数</small></div>
+          <div class="flow-step"><b>主线程快照</b><small>OP UUID、世界名、playerdata 路径</small></div>
+          <div class="flow-step"><b>异步批处理</b><small>枚举、锁定 UUID、解析和判定</small></div>
+          <div class="flow-step"><b>事务式写回</b><small>备份、临时文件、原子替换、状态</small></div>
+        </div>
+        <h3>并发保护协议</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>阶段</th><th>保护</th><th>结果</th></tr></thead>
+            <tbody>
+              <tr><td>AsyncPreLogin LOWEST</td><td>UUID 写入登录保护截止时间</td><td>扫描器不会碰正在登录的文件。</td></tr>
+              <tr><td>Join</td><td>UUID 加入 <code>onlinePlayerIds</code></td><td>在线期间持续保护。</td></tr>
+              <tr><td>Quit / 登录失败</td><td>移出在线集，保留退出缓冲时间</td><td>等待服务端完成保存。</td></tr>
+              <tr><td>单文件处理</td><td><code>ReentrantLock</code> 按 UUID 加锁，再次检查保护</td><td>同一 UUID 不会并发写入。</td></tr>
+              <tr><td>写回</td><td>同目录临时文件 + <code>ATOMIC_MOVE</code></td><td>文件系统支持时原子提交，否则替换移动。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>只有完整扫完队列才调用 <code>saveLastSuccessfulDate()</code>。窗口结束、禁用插件或枚举异常都以失败收尾，不推进运行日期。</p>
+      </section>
+
+      <section class="doc-section" id="nbt">
+        <span class="section-kicker">08 / NBT format</span>
+        <h2>NBT 兼容层</h2>
+        <p><code>NbtItemChecker</code> 同时接受现代 data components 与旧版 tag 结构，主入口只修改 <code>Inventory</code> 和 <code>EnderItems</code> 两个 Compound 列表。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>语义</th><th>现代字段</th><th>旧字段</th></tr></thead>
+            <tbody>
+              <tr><td>数量</td><td><code>count</code></td><td><code>Count</code></td></tr>
+              <tr><td>耐久</td><td><code>components.minecraft:damage</code></td><td><code>tag.Damage</code></td></tr>
+              <tr><td>附魔</td><td><code>minecraft:enchantments.levels</code></td><td><code>Enchantments</code> / <code>StoredEnchantments</code></td></tr>
+              <tr><td>属性</td><td><code>minecraft:attribute_modifiers</code></td><td><code>AttributeModifiers</code></td></tr>
+              <tr><td>不可破坏</td><td><code>minecraft:unbreakable</code> 存在</td><td><code>Unbreakable=true</code></td></tr>
+              <tr><td>嵌套容器</td><td><code>minecraft:container</code> / <code>minecraft:bundle_contents</code></td><td><code>BlockEntityTag.Items</code> / <code>tag.Items</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning"><strong>未知附魔的保守上限</strong>离线线程不能动态查询注册表，启动时已注册附魔会快照真实上限；未知 ID 使用 <code>unknown-enchant-max-level</code>，默认 10。新增自定义附魔集成时应把允许值写入 <code>custom-enchant-limits</code>。</div>
+      </section>
+
+      <section class="doc-section" id="rules">
+        <span class="section-kicker">09 / Rules</span>
+        <h2>规则快照与判定顺序</h2>
+        <p>在线与离线适配器遵循相同的早返回顺序，第一条违规原因决定处置日志。规则不是修复器：一旦判违，整个物品栈从所在列表移除。</p>
+        <ol class="step-list">
+          <li><strong>材料黑名单</strong>标准化为不含命名空间的小写 ID。</li>
+          <li><strong>附魔等级</strong>自定义上限优先，其次注册表最大等级乘倍率。</li>
+          <li><strong>耐久</strong>拒绝负 damage 与超过材料最大耐久 + 10 的值。</li>
+          <li><strong>堆叠</strong>拒绝负数和超过材料原版最大堆叠的数量。</li>
+          <li><strong>属性</strong>七类属性按 modifier amount 绝对值比较。</li>
+          <li><strong>不可破坏</strong>配置启用时，存在对应标记即判违。</li>
+        </ol>
+        <p>Leaves 1.21.10 的属性枚举已去除旧 <code>GENERIC_*</code> 常量依赖。在线检查通过 namespaced key 的 key 部分映射阈值，同时接受 <code>generic.attack_damage</code> 等旧键形式。</p>
+      </section>
+
+      <section class="doc-section" id="source-map">
+        <span class="section-kicker">10 / Source map</span>
+        <h2>源码索引</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>文件</th><th>职责</th><th>主要协作者</th></tr></thead>
+            <tbody>
+              <tr><td><code>LeavesAntiIllegalPlugin.java</code></td><td>生命周期、任务编排、规则快照、玩家数据保护</td><td>全部模块</td></tr>
+              <tr><td><code>ItemChecker.java</code></td><td>在线 ItemStack/Inventory 判定、递归与通知</td><td>监听器、两个扫描器</td></tr>
+              <tr><td><code>listener/PlayerListener.java</code></td><td>玩家事件和登录/退出保护</td><td>主类、ItemChecker</td></tr>
+              <tr><td><code>listener/InventoryListener.java</code></td><td>库存交互拦截与开关库存检查</td><td>ItemChecker</td></tr>
+              <tr><td><code>scanner/LoadedContainerScanner.java</code></td><td>已加载区块索引和主线程批次</td><td>ItemChecker</td></tr>
+              <tr><td><code>scanner/OfflinePlayerDataScanner.java</code></td><td>窗口、队列、锁、文件事务和统计</td><td>NbtItemChecker、主类</td></tr>
+              <tr><td><code>scanner/NbtItemChecker.java</code></td><td>现代/旧版 NBT 格式判定与列表清理</td><td>OfflinePlayerDataScanner</td></tr>
+              <tr><td><code>command/AntiIllegalCommand.java</code></td><td>管理命令、状态与补全</td><td>主类、扫描器</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-block">
+          <div class="code-toolbar"><span>Java 包结构</span><button class="copy-button" type="button" data-copy-target="package-tree">复制</button></div>
+          <pre id="package-tree"><code>dev.leavesantiillegal
+├── LeavesAntiIllegalPlugin
+├── ItemChecker
+├── command.AntiIllegalCommand
+├── listener.InventoryListener
+├── listener.PlayerListener
+└── scanner
+    ├── LoadedContainerScanner
+    ├── NbtItemChecker
+    └── OfflinePlayerDataScanner</code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="build">
+        <span class="section-kicker">11 / Build</span>
+        <h2>构建与依赖</h2>
+        <p>Maven 默认解析 Leaves 1.21.10 快照 API，<code>leaves-1.21.11</code> profile 只覆盖 API 版本和输出目录，确保同一份源码接受两个 API 编译器检查。</p>
+        <div class="code-block">
+          <div class="code-toolbar"><span>双版本构建</span><button class="copy-button" type="button" data-copy-target="build-commands">复制</button></div>
+          <pre id="build-commands"><code># 发布基线
+mvn clean package
+# => target/LeavesAntiIllegal-2.0.0.jar
+
+# 1.21.11 兼容编译
+mvn -Pleaves-1.21.11 clean package
+# => target-1.21.11/LeavesAntiIllegal-2.0.0.jar</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>依赖</th><th>范围</th><th>发布行为</th></tr></thead>
+            <tbody>
+              <tr><td><code>org.leavesmc.leaves:leaves-api</code></td><td><code>provided</code></td><td>由服务器提供，不打入 JAR。</td></tr>
+              <tr><td><code>com.github.Querz:NBT:6.1</code></td><td>compile</td><td>shade 到 JAR，并重定位为 <code>dev.leavesantiillegal.lib.querz</code>。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>仓库使用 <code>https://repo.leavesmc.org/snapshots/</code>。API 是快照版本，CI 应缓存 Maven 仓库但仍定期刷新，并在刷新后重新跑双版本编译。</p>
+      </section>
+
+      <section class="doc-section" id="extension">
+        <span class="section-kicker">12 / Extension</span>
+        <h2>扩展时必须保留的约束</h2>
+        <h3>增加一种在线判定</h3>
+        <ul>
+          <li>把阈值读入 <code>ItemChecker</code> 的构造快照，不要在每件物品上反复查 YAML。</li>
+          <li>在 <code>checkItem()</code> 返回可审计的中文原因，不要直接在规则函数中删除物品。</li>
+          <li>若离线也应生效，在 <code>NbtItemChecker</code> 增加等价格式解析和合成 NBT 测试。</li>
+        </ul>
+        <h3>增加一种扫描来源</h3>
+        <ul>
+          <li>Bukkit 活对象必须在主线程获取和修改。</li>
+          <li>批次必须有上限与配置开关，不能一次遍历全服所有对象。</li>
+          <li>复用 <code>ItemChecker.scanContainer()</code> 或 <code>checkItem()</code>，保持通知和统计一致。</li>
+        </ul>
+        <h3>修改离线写回</h3>
+        <ul>
+          <li>保留“按 UUID 加锁 → 再检查保护 → 备份 → 临时文件 → 原子替换”的顺序。</li>
+          <li>任何异常都必须清理临时文件，且不能推进成功日期。</li>
+          <li>不得异步调用玩家、世界、注册表或插件管理器的活状态。</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="verification">
+        <span class="section-kicker">13 / Verification</span>
+        <h2>验证与发布</h2>
+        <ul class="checklist">
+          <li>默认构建通过 Leaves 1.21.10 API 编译。</li>
+          <li><code>leaves-1.21.11</code> profile 通过 1.21.11 API 编译。</li>
+          <li>JAR 内 <code>plugin.yml</code> 的 name、version、main 与 Maven 坐标一致。</li>
+          <li>JAR 不包含 Leaves API，但包含已重定位的 Querz NBT 类。</li>
+          <li>默认 <code>config.yml</code> 能被 SnakeYAML 解析，且关键扫描器默认开启。</li>
+          <li>合成 NBT 覆盖材料黑名单、32K 附魔、堆叠、属性、现代/旧版嵌套容器。</li>
+          <li>静态文档在桌面与移动视口无横向正文溢出，搜索、目录和复制按钮可用。</li>
+          <li>在隔离的 Leaves 测试服完成启动、重载、玩家扫描、容器扫描和离线备份恢复。</li>
+        </ul>
+        <div class="callout"><strong>发布产物选择</strong>推荐发布 1.21.10 基线产物，因为它使用两个目标中的较低 API 编译；1.21.11 profile 是 API 演进检查。若未来代码必须调用仅 1.21.11 存在的 API，应拆分适配层或单独发布版本。</div>
+        <div class="code-block">
+          <div class="code-toolbar"><span>发布前快速检查</span><button class="copy-button" type="button" data-copy-target="release-check">复制</button></div>
+          <pre id="release-check"><code>jar tf target/LeavesAntiIllegal-2.0.0.jar
+unzip -p target/LeavesAntiIllegal-2.0.0.jar plugin.yml
+unzip -p target/LeavesAntiIllegal-2.0.0.jar config.yml
+sha256sum target/LeavesAntiIllegal-2.0.0.jar</code></pre>
+        </div>
+      </section>
+    </article>
+
+    <footer class="doc-footer">
+      <div class="doc-footer-inner">
+        <span>LeavesAntiIllegal 2.0.0 · 开发者文档</span>
+        <span>最后更新：2026-07-14 · API 来源见 <a href="https://github.com/LeavesMC/Leaves">Leaves 官方仓库</a></span>
+      </div>
+    </footer>
+  </main>
+
+  <a class="back-top" href="#top" aria-label="返回顶部" title="返回顶部">↑</a>
+  <script src="assets/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+name: LeavesAntiIllegal
+version: '2.0.0'
+main: dev.leavesantiillegal.LeavesAntiIllegalPlugin
+api-version: '1.21'
+description: 面向 Leaves 1.21.10/1.21.11，扫描玩家、容器与离线数据中的违禁物品
+authors: [NebulaHost]
+prefix: LeavesAntiIllegal
+
+permissions:
+  antiillegal.bypass:
+    description: 绕过违禁物品检测（管理员）
+    default: op
+  antiillegal.admin:
+    description: 使用管理命令
+    default: op
+  antiillegal.notify:
+    description: 接收违禁物品通知
+    default: op
+
+commands:
+  antiillegal:
+    description: 违禁物品管理命令
+    usage: /antiillegal <reload|scan|check|status>
+    permission: antiillegal.admin
+    aliases: [ai, illegal]

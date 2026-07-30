@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LeavesAntiIllegal 2.0.0 服主安装、配置、迁移与恢复手册">
+  <title>服主手册 | LeavesAntiIllegal 2.0.0</title>
+  <link rel="icon" href="assets/leaves-logo.png">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+  <button class="nav-toggle" type="button" aria-label="打开目录" aria-controls="sidebar" aria-expanded="false">☰</button>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="index.html" aria-label="返回文档首页">
+      <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
+      <span><strong>LeavesAntiIllegal</strong><span>服主手册 · 2.0.0</span></span>
+    </a>
+    <div class="search-wrap">
+      <label for="doc-search">筛选本文档</label>
+      <input id="doc-search" type="search" placeholder="配置、备份、命令…" autocomplete="off" data-doc-search>
+      <p class="search-result" data-search-result>共 12 个章节</p>
+    </div>
+    <nav aria-label="文档目录">
+      <a href="#overview">适用范围</a>
+      <a href="#install">全新安装</a>
+      <a href="#migration">旧版迁移</a>
+      <a href="#first-run">首次上线</a>
+      <a href="#coverage">扫描范围</a>
+      <a href="#configuration">配置索引</a>
+      <a href="#offline">离线低峰扫描</a>
+      <a href="#commands">命令与权限</a>
+      <a href="#recovery">备份与恢复</a>
+      <a href="#tuning">性能调优</a>
+      <a href="#troubleshooting">故障排查</a>
+      <a href="#checklist">上线检查表</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html">文档首页</a><a href="developer.html">开发者文档</a><a href="../README.md">README</a>
+    </div>
+  </aside>
+
+  <main class="page" id="top">
+    <header class="doc-header">
+      <div class="header-inner">
+        <p class="eyebrow">运维参考 / Server owner guide</p>
+        <h1>LeavesAntiIllegal 服主手册</h1>
+        <p class="lede">用于部署、配置和维护 Leaves 1.21.10 / 1.21.11 上的在线玩家、已加载容器与离线玩家数据扫描。</p>
+        <div class="meta-strip" aria-label="兼容信息">
+          <span class="meta-item ok">Leaves 1.21.10 / 1.21.11</span>
+          <span class="meta-item">Java 21</span>
+          <span class="meta-item">配置版本 3</span>
+          <span class="meta-item">插件版本 2.0.0</span>
+        </div>
+      </div>
+    </header>
+
+    <article class="content">
+      <div class="empty-search" data-empty-search>没有匹配的章节，请尝试材料名、配置键或命令。</div>
+
+      <section class="doc-section" id="overview">
+        <span class="section-kicker">01 / 适用范围</span>
+        <h2>先确认运行环境</h2>
+        <p>此版本只以 Leaves 的标准 Bukkit 主线程模型为目标，不再使用 Folia 区域调度器。插件已分别通过 Leaves 1.21.10 与 1.21.11 API 编译，服务器必须使用 Java 21。</p>
+        <div class="metric-grid">
+          <div class="metric"><strong>在线数据</strong><span>背包、盔甲、副手、光标和末影箱。</span></div>
+          <div class="metric"><strong>世界容器</strong><span>只处理当前已加载区块，不主动加载新区块。</span></div>
+          <div class="metric"><strong>离线数据</strong><span>低峰期分批处理各世界 playerdata 文件。</span></div>
+        </div>
+        <div class="callout warning">
+          <strong>不要在 Folia 上加载 2.0.0</strong>
+          本版的世界、实体和库存操作按 Leaves/Bukkit 单主线程约束实现。若以后重新切换 Folia，需要恢复区域与实体调度设计，不能只修改 <code>plugin.yml</code>。
+        </div>
+      </section>
+
+      <section class="doc-section" id="install">
+        <span class="section-kicker">02 / 安装</span>
+        <h2>全新安装</h2>
+        <ol class="step-list">
+          <li><strong>停止服务器并做世界备份</strong>至少保留所有世界目录和现有 <code>plugins/</code>。</li>
+          <li><strong>检查 Java 与核心</strong>使用 Java 21，核心版本为 Leaves 1.21.10 或 1.21.11。</li>
+          <li><strong>放入插件</strong>将 <code>LeavesAntiIllegal-2.0.0.jar</code> 放到服务器 <code>plugins/</code>。</li>
+          <li><strong>启动一次</strong>等待生成 <code>plugins/LeavesAntiIllegal/config.yml</code>，确认控制台出现启用日志。</li>
+          <li><strong>先做演练</strong>把离线扫描的 <code>dry-run</code> 改成 <code>true</code>，重载后观察一个低峰窗口。</li>
+        </ol>
+        <div class="code-block">
+          <div class="code-toolbar"><span>目录结果</span><button class="copy-button" type="button" data-copy-target="install-tree">复制</button></div>
+          <pre id="install-tree"><code>server/
+├── leaves-1.21.10-or-1.21.11.jar
+├── plugins/
+│   ├── LeavesAntiIllegal-2.0.0.jar
+│   └── LeavesAntiIllegal/
+│       ├── config.yml
+│       └── scanner-state.properties
+└── world/playerdata/</code></pre>
+        </div>
+        <p><code>scanner-state.properties</code> 在一次离线全量扫描成功结束后生成，用于记录最近完成日期，避免同一天重复遍历。</p>
+      </section>
+
+      <section class="doc-section" id="migration">
+        <span class="section-kicker">03 / 迁移</span>
+        <h2>从 FoliaAntiIllegal 升级</h2>
+        <p>项目名、插件名、主类和 Java 包均已更改。Bukkit 会因此使用新的数据目录，旧配置不会自动进入新插件。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>项目</th><th>旧版</th><th>2.0.0</th></tr></thead>
+            <tbody>
+              <tr><td>插件名</td><td><code>FoliaAntiIllegal</code></td><td><code>LeavesAntiIllegal</code></td></tr>
+              <tr><td>数据目录</td><td><code>plugins/FoliaAntiIllegal/</code></td><td><code>plugins/LeavesAntiIllegal/</code></td></tr>
+              <tr><td>目标核心</td><td>Folia / Paper 旧目标</td><td>Leaves 1.21.10 / 1.21.11</td></tr>
+              <tr><td>命令与权限</td><td><code>/antiillegal</code>、<code>antiillegal.*</code></td><td>保持不变</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="step-list">
+          <li><strong>关闭服务器</strong>不能热替换插件 JAR，也不要同时保留新旧两份 JAR。</li>
+          <li><strong>移走旧 JAR</strong>保留旧数据目录作为参考，但不要让旧插件再次加载。</li>
+          <li><strong>让新版本生成配置</strong>新配置包含 2.0.0 的全部字段和逐行中文注释。</li>
+          <li><strong>逐项合并业务规则</strong>迁移 <code>banned-materials</code>、附魔/属性阈值、白名单和自定义消息。</li>
+          <li><strong>演练后启用写回</strong>不要直接用旧配置覆盖配置版本 3。</li>
+        </ol>
+        <div class="callout danger">
+          <strong>同名配置不代表结构相同</strong>
+          离线扫描、已加载容器、低峰窗口和文件保护均是新版字段。直接覆盖会让缺失项回落到代码默认值，但你会失去完整注释，也不便于审计实际行为。
+        </div>
+      </section>
+
+      <section class="doc-section" id="first-run">
+        <span class="section-kicker">04 / 首次运行</span>
+        <h2>推荐的分阶段上线</h2>
+        <ol class="step-list">
+          <li><strong>第一阶段：只观察离线数据</strong>设置 <code>scanners.offline-player-data.dry-run: true</code>，在线与容器扫描仍会正常移除。</li>
+          <li><strong>第二阶段：核对误报</strong>重点检查不可破坏物品、玩家头颅、自定义属性装备和插件附魔。</li>
+          <li><strong>第三阶段：调整白名单和规则</strong>合法运营道具应从禁止材料中删除或放宽对应检测项，不要长期给普通玩家绕过权限。</li>
+          <li><strong>第四阶段：启用离线写回</strong>保持 <code>backup-before-write: true</code>，把 <code>dry-run</code> 改为 <code>false</code>。</li>
+        </ol>
+        <div class="code-block">
+          <div class="code-toolbar"><span>首次演练配置</span><button class="copy-button" type="button" data-copy-target="dry-run-config">复制</button></div>
+          <pre id="dry-run-config"><code>scanners:
+  offline-player-data:
+    enabled: true
+    dry-run: true
+    backup-before-write: true
+    log-each-removal: true</code></pre>
+        </div>
+        <p>确认后将 <code>log-each-removal</code> 恢复为 <code>false</code>，否则大量历史违规可能显著增加日志量。</p>
+      </section>
+
+      <section class="doc-section" id="coverage">
+        <span class="section-kicker">05 / 工作范围</span>
+        <h2>扫描器如何覆盖物品</h2>
+        <div class="flow" aria-label="物品扫描覆盖流程">
+          <div class="flow-step"><b>实时事件</b><small>拾取、点击、拖拽、换手与加入。</small></div>
+          <div class="flow-step"><b>在线定时</b><small>默认每 100 tick 扫描玩家库存。</small></div>
+          <div class="flow-step"><b>已加载区块</b><small>默认每 200 tick 处理 16 个区块。</small></div>
+          <div class="flow-step"><b>离线低峰</b><small>按窗口和在线人数处理 playerdata。</small></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>来源</th><th>包含</th><th>不会做什么</th></tr></thead>
+            <tbody>
+              <tr><td>在线玩家</td><td>背包、快捷栏、盔甲、副手、光标、末影箱</td><td>绕过权限、OP、UUID 白名单不处理</td></tr>
+              <tr><td>方块容器</td><td>箱子、木桶、漏斗、熔炉、方块潜影盒等</td><td>不会为扫描主动加载区块</td></tr>
+              <tr><td>实体容器</td><td>运输矿车、漏斗矿车等 InventoryHolder</td><td>玩家实体由在线扫描器负责</td></tr>
+              <tr><td>离线文件</td><td>各世界标准 UUID <code>.dat</code> 的背包、末影箱、嵌套物品</td><td>在线、登录中、刚退出、OP 和白名单玩家跳过</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>嵌套扫描默认最多 3 层，覆盖潜影盒、带库存的方块状态物品和收纳袋。增加深度会提高恶意复杂 NBT 的处理成本。</p>
+      </section>
+
+      <section class="doc-section" id="configuration">
+        <span class="section-kicker">06 / 配置索引</span>
+        <h2>关键配置怎么选</h2>
+        <p>发行包中的 <code>config.yml</code> 已为每个节点、字段和列表项提供中文解释、默认值与示例。以下是运维时最常调整的参数。</p>
+        <h3>扫描节奏</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>配置键</th><th>默认</th><th>建议</th></tr></thead>
+            <tbody>
+              <tr><td><code>scanners.online-players.interval-ticks</code></td><td>100</td><td>5 秒一次；人数多可调到 200。</td></tr>
+              <tr><td><code>scanners.loaded-containers.interval-ticks</code></td><td>200</td><td>批次间隔 10 秒。</td></tr>
+              <tr><td><code>scanners.loaded-containers.chunks-per-run</code></td><td>16</td><td>卡顿时先降到 4 或 8。</td></tr>
+              <tr><td><code>scanners.nested-containers.max-depth</code></td><td>3</td><td>通常无需超过 3，最大建议 5。</td></tr>
+              <tr><td><code>scanners.offline-player-data.files-per-batch</code></td><td>10</td><td>机械盘可降到 2；观察磁盘延迟再增加。</td></tr>
+              <tr><td><code>scanners.offline-player-data.batch-delay-ticks</code></td><td>20</td><td>每批间隔 1 秒；越大越平缓。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>判定规则</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>配置</th><th>用途</th><th>容易误伤的场景</th></tr></thead>
+            <tbody>
+              <tr><td><code>banned-materials</code></td><td>直接禁止材料</td><td><code>PLAYER_HEAD</code>、刷怪笼等合法玩法。</td></tr>
+              <tr><td><code>check-unbreakable</code></td><td>禁止不可破坏标记</td><td>任务物品、菜单物品、特殊工具。</td></tr>
+              <tr><td><code>custom-enchant-limits</code></td><td>覆盖单个附魔上限</td><td>自定义附魔或刻意放宽的原版附魔。</td></tr>
+              <tr><td><code>attribute-limits</code></td><td>按绝对值限制七类属性</td><td>RPG 装备、负属性平衡道具。</td></tr>
+              <tr><td><code>whitelisted-players</code></td><td>按 UUID 完全跳过</td><td>只适合受控的系统账号。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout info"><strong>重载会重启全部扫描器</strong>修改后执行 <code>/antiillegal reload</code>。重载会重新读取规则快照、取消旧任务并按新设置启动，不需要重启服务器。</div>
+      </section>
+
+      <section class="doc-section" id="offline">
+        <span class="section-kicker">07 / 离线数据</span>
+        <h2>低峰扫描的边界与保护</h2>
+        <p>离线扫描只会在当前时间处于配置窗口、距离上次成功运行已满足天数且在线人数不高于阈值时开始。跨午夜窗口会归属到窗口开始日。</p>
+        <div class="path-grid">
+          <div class="path-item"><strong>窗口控制</strong><span><code>window-start</code>、<code>window-end</code>、<code>time-zone</code></span></div>
+          <div class="path-item"><strong>负载控制</strong><span><code>max-online-players</code>、<code>files-per-batch</code>、<code>batch-delay-ticks</code></span></div>
+          <div class="path-item"><strong>文件保护</strong><span>登录/退出保护、UUID 锁、备份、临时文件原子替换</span></div>
+        </div>
+        <h3>推荐窗口示例</h3>
+        <div class="code-block">
+          <div class="code-toolbar"><span>每日 03:30 至 05:30，仅在线不超过 2 人</span><button class="copy-button" type="button" data-copy-target="low-peak-config">复制</button></div>
+          <pre id="low-peak-config"><code>scanners:
+  offline-player-data:
+    time-zone: "Asia/Shanghai"
+    window-start: "03:30"
+    window-end: "05:30"
+    minimum-days-between-runs: 1
+    max-online-players: 2
+    files-per-batch: 5
+    batch-delay-ticks: 40</code></pre>
+        </div>
+        <ul>
+          <li>窗口结束时未完成的一轮会停止，不写入成功日期，下个合适窗口会重新枚举。</li>
+          <li>在线人数超过阈值时当前批次暂停，不会继续读下一个文件。</li>
+          <li>玩家预登录、在线期间和退出后的保护时间内，其 UUID 文件会被跳过。</li>
+          <li><code>dry-run: true</code> 只检测和记录，不创建备份、不写回原文件。</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="commands">
+        <span class="section-kicker">08 / 管理入口</span>
+        <h2>命令与权限</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>命令</th><th>作用</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td><code>/antiillegal reload</code></td><td>重载配置并重启扫描器</td><td>控制台或有管理权限的玩家可用。</td></tr>
+              <tr><td><code>/antiillegal scan</code></td><td>立即扫描全部在线玩家</td><td>返回玩家数与移除总数。</td></tr>
+              <tr><td><code>/antiillegal scan &lt;玩家&gt;</code></td><td>扫描指定在线玩家</td><td>目标必须在线。</td></tr>
+              <tr><td><code>/antiillegal check</code></td><td>检查执行者主手物品</td><td>仅玩家可用，不删除。</td></tr>
+              <tr><td><code>/antiillegal status</code></td><td>查看容器与离线扫描统计</td><td>用于判断任务是否启用/运行。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>权限</th><th>默认</th><th>作用</th></tr></thead>
+            <tbody>
+              <tr><td><code>antiillegal.admin</code></td><td>OP</td><td>使用所有管理命令。</td></tr>
+              <tr><td><code>antiillegal.notify</code></td><td>OP</td><td>接收在线玩家与容器违禁通知。</td></tr>
+              <tr><td><code>antiillegal.bypass</code></td><td>OP</td><td>在线扫描完全绕过；请谨慎授予。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>命令别名为 <code>/ai</code> 和 <code>/illegal</code>。离线扫描还会自动跳过服务器 OP 与 UUID 白名单。</p>
+      </section>
+
+      <section class="doc-section" id="recovery">
+        <span class="section-kicker">09 / 数据安全</span>
+        <h2>备份与单玩家恢复</h2>
+        <p>默认设置下，离线扫描仅在确实发现违禁物且准备写回时，把原文件复制为 <code>&lt;UUID&gt;.dat.fai.bak</code>。同一玩家下次被修改会覆盖该备份，因此它不是长期版本库。</p>
+        <ol class="step-list">
+          <li><strong>停止服务器</strong>确保服务器不会同时保存该玩家数据。</li>
+          <li><strong>确认玩家 UUID 与世界</strong>从日志中的世界名和 UUID 找到对应 <code>playerdata</code>。</li>
+          <li><strong>保留当前文件</strong>把当前 <code>&lt;UUID&gt;.dat</code> 另行复制，以便反向恢复。</li>
+          <li><strong>恢复备份</strong>用 <code>&lt;UUID&gt;.dat.fai.bak</code> 替换 <code>&lt;UUID&gt;.dat</code>。</li>
+          <li><strong>先修正规则</strong>若不调整误报规则，下一次低峰扫描仍会再次移除。</li>
+        </ol>
+        <div class="callout danger"><strong>恢复必须在停服状态进行</strong>在线替换 playerdata 可能被服务器内存中的玩家数据覆盖，也可能造成文件损坏。大范围回滚优先恢复整服世界备份。</div>
+      </section>
+
+      <section class="doc-section" id="tuning">
+        <span class="section-kicker">10 / 性能</span>
+        <h2>按症状调优</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>症状</th><th>先调整</th><th>取舍</th></tr></thead>
+            <tbody>
+              <tr><td>每 10 秒出现主线程尖峰</td><td>降低 <code>chunks-per-run</code>，再提高容器 <code>interval-ticks</code></td><td>完成一轮已加载区块扫描会更慢。</td></tr>
+              <tr><td>在线人数多时定时扫描压力大</td><td>提高在线 <code>interval-ticks</code> 到 200 或 400</td><td>事件检测仍在，但静止库存发现延迟增加。</td></tr>
+              <tr><td>低峰磁盘延迟升高</td><td>降低 <code>files-per-batch</code>，提高 <code>batch-delay-ticks</code></td><td>可能无法在窗口内扫完全部历史玩家。</td></tr>
+              <tr><td>嵌套恶意物品处理慢</td><td>把 <code>max-depth</code> 保持 2 至 3</td><td>更深层嵌套不再递归。</td></tr>
+              <tr><td>通知刷屏</td><td>关闭 <code>notify-admins</code> 或 <code>log-each-removal</code></td><td>检测和删除仍继续，仅减少通知。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>先减小批次，再拉长间隔</strong>批次大小直接决定一次任务占用主线程或磁盘的工作量；间隔决定完成整轮扫描所需时间。每次只改一个变量，结合 spark 或服务端 timings 对比。</div>
+      </section>
+
+      <section class="doc-section" id="troubleshooting">
+        <span class="section-kicker">11 / 排障</span>
+        <h2>常见问题</h2>
+        <h3>插件未加载或显示红色</h3>
+        <ul>
+          <li>确认服务端是 Leaves 1.21.10 / 1.21.11，并使用 Java 21。</li>
+          <li>确认 JAR 名为 <code>LeavesAntiIllegal-2.0.0.jar</code>，没有同时保留旧版 JAR。</li>
+          <li>从控制台第一段异常开始检查，不要只看最后一行。</li>
+        </ul>
+        <h3>离线扫描没有启动</h3>
+        <ul>
+          <li>用 <code>/antiillegal status</code> 确认扫描器已启用且当前未在运行。</li>
+          <li>核对 <code>time-zone</code>、窗口起止、在线人数阈值和最近成功日期。</li>
+          <li>检查各世界是否存在 <code>playerdata/</code>，且文件名是标准 UUID。</li>
+        </ul>
+        <h3>合法物品被删除</h3>
+        <ul>
+          <li>从日志读取材料、路径和原因，定位对应规则。</li>
+          <li>运营头颅玩法时从 <code>banned-materials</code> 移除 <code>PLAYER_HEAD</code>。</li>
+          <li>任务物品使用不可破坏标记时关闭 <code>check-unbreakable</code>，或重新设计物品。</li>
+          <li>自定义附魔使用 <code>custom-enchant-limits</code> 明确设置允许值。</li>
+        </ul>
+        <h3>配置重载后没有生效</h3>
+        <ul>
+          <li>先检查 YAML 缩进和控制台解析错误，列表只能保留一种写法。</li>
+          <li>确认命令返回“配置与全部扫描器已重新加载”。</li>
+          <li>用 <code>/antiillegal status</code> 验证开关与任务状态。</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="checklist">
+        <span class="section-kicker">12 / 交付</span>
+        <h2>正式上线检查表</h2>
+        <ul class="checklist">
+          <li>已备份全部世界与旧插件数据目录。</li>
+          <li>服务器为 Leaves 1.21.10 / 1.21.11，运行 Java 21。</li>
+          <li>旧 FoliaAntiIllegal JAR 已移除，没有重复加载。</li>
+          <li>已从新配置出发逐项合并规则，而非覆盖整个文件。</li>
+          <li>已检查 <code>PLAYER_HEAD</code>、不可破坏物品、自定义附魔和 RPG 属性。</li>
+          <li>离线扫描已用 <code>dry-run: true</code> 完成一次演练。</li>
+          <li>低峰窗口、时区、在线人数阈值和磁盘批次符合本服情况。</li>
+          <li><code>backup-before-write</code> 保持开启，并验证过单玩家恢复流程。</li>
+          <li>权限只授予需要的管理组，没有给普通玩家 <code>antiillegal.bypass</code>。</li>
+          <li>已执行 <code>/antiillegal status</code> 和一次指定玩家扫描。</li>
+        </ul>
+      </section>
+    </article>
+
+    <footer class="doc-footer">
+      <div class="doc-footer-inner">
+        <span>LeavesAntiIllegal 2.0.0 · 服主手册</span>
+        <span>最后更新：2026-07-14 · 官方核心资料见 <a href="https://docs.leavesmc.org/">Leaves 文档</a></span>
+      </div>
+    </footer>
+  </main>
+
+  <a class="back-top" href="#top" aria-label="返回顶部" title="返回顶部">↑</a>
+  <script src="assets/docs.js"></script>
+</body>
+</html>

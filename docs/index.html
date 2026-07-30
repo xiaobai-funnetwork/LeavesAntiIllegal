@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LeavesAntiIllegal 2.0.0 文档中心：服主部署手册与开发者技术参考">
+  <title>文档中心 | LeavesAntiIllegal 2.0.0</title>
+  <link rel="icon" href="assets/leaves-logo.png">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body class="landing-body">
+  <header class="landing-nav">
+    <div class="landing-nav-inner">
+      <a class="landing-brand" href="index.html" aria-label="LeavesAntiIllegal 文档首页">
+        <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
+        <span><strong>LeavesAntiIllegal</strong><small>Documentation · 2.0.0</small></span>
+      </a>
+      <nav class="landing-links" aria-label="文档导航">
+        <a href="server-owner.html">服主手册</a>
+        <a href="developer.html">开发者文档</a>
+        <a href="../README.md">README</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="landing-hero">
+      <div class="landing-shell landing-hero-grid">
+        <div>
+          <p class="eyebrow">Leaves server protection / Documentation</p>
+          <h1>从部署到扩展，快速了解 LeavesAntiIllegal</h1>
+          <p class="lede">面向 Leaves 1.21.10 / 1.21.11 的违禁物品扫描插件，覆盖在线玩家、已加载容器与离线玩家数据。</p>
+          <div class="landing-actions">
+            <a class="button primary" href="server-owner.html">开始部署</a>
+            <a class="button secondary" href="developer.html#architecture">查看架构</a>
+          </div>
+          <div class="meta-strip" aria-label="兼容信息">
+            <span class="meta-item ok">Leaves 1.21.10 / 1.21.11</span>
+            <span class="meta-item">Java 21</span>
+            <span class="meta-item">插件 2.0.0</span>
+            <span class="meta-item">配置版本 3</span>
+          </div>
+        </div>
+        <aside class="landing-summary" aria-label="扫描范围摘要">
+          <span class="section-kicker">Protection coverage</span>
+          <h2>四条检测链路</h2>
+          <ul class="landing-feature-list">
+            <li><span>01</span><div><strong>实时事件</strong><small>拾取、点击、换手、交互与玩家加入。</small></div></li>
+            <li><span>02</span><div><strong>在线定时</strong><small>背包、盔甲、副手、光标与末影箱。</small></div></li>
+            <li><span>03</span><div><strong>已加载容器</strong><small>分批扫描方块和容器实体，不加载新区块。</small></div></li>
+            <li><span>04</span><div><strong>离线数据</strong><small>低峰期安全处理 playerdata，支持备份与原子替换。</small></div></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="landing-section" aria-labelledby="choose-guide">
+      <div class="landing-shell">
+        <span class="section-kicker">Choose a guide</span>
+        <h2 id="choose-guide">选择适合你的文档</h2>
+        <p class="landing-intro">两份手册可以直接在浏览器中打开，不需要部署 Web 服务。</p>
+        <div class="guide-grid">
+          <a class="guide-card" href="server-owner.html">
+            <span class="guide-index">01</span>
+            <div>
+              <span class="tag sync">部署与运维</span>
+              <h3>服主手册</h3>
+              <p>安装迁移、配置解释、低峰扫描、命令权限、备份恢复与性能调优。</p>
+              <span class="guide-link">打开服主手册 <b aria-hidden="true">→</b></span>
+            </div>
+          </a>
+          <a class="guide-card" href="developer.html">
+            <span class="guide-index">02</span>
+            <div>
+              <span class="tag async">开发与发布</span>
+              <h3>开发者文档</h3>
+              <p>总体架构、线程所有权、在线检测链、NBT 写回协议、构建与扩展约束。</p>
+              <span class="guide-link">打开开发者文档 <b aria-hidden="true">→</b></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section landing-section-muted" aria-labelledby="quick-start">
+      <div class="landing-shell landing-split">
+        <div>
+          <span class="section-kicker">Quick start</span>
+          <h2 id="quick-start">三步开始使用</h2>
+          <ol class="step-list landing-steps">
+            <li><strong>准备运行环境</strong>使用 Java 21 启动 Leaves 1.21.10 或 1.21.11。</li>
+            <li><strong>安装并生成配置</strong>把 JAR 放入 <code>plugins/</code>，启动一次服务器。</li>
+            <li><strong>先演练离线扫描</strong>首次部署建议启用 <code>dry-run</code>，确认日志后再写回。</li>
+          </ol>
+        </div>
+        <div class="code-block landing-command">
+          <div class="code-toolbar"><span>构建发布基线</span></div>
+          <pre><code>mvn clean package
+
+# 输出
+target/LeavesAntiIllegal-2.0.0.jar</code></pre>
+          <div class="landing-command-note">
+            <strong>需要 1.21.11 兼容编译？</strong>
+            <code>mvn -Pleaves-1.21.11 clean package</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" aria-labelledby="project-links">
+      <div class="landing-shell">
+        <span class="section-kicker">Project resources</span>
+        <h2 id="project-links">项目与上游资源</h2>
+        <div class="resource-grid">
+          <a class="resource-item" href="../README.md"><strong>项目 README</strong><span>功能、安装与迁移概览</span></a>
+          <a class="resource-item" href="https://docs.leavesmc.org/"><strong>Leaves 官方文档</strong><span>核心安装与运行参考</span></a>
+          <a class="resource-item" href="https://github.com/LeavesMC/Leaves"><strong>Leaves 官方仓库</strong><span>API 与上游源码</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <div class="landing-shell">
+      <span>LeavesAntiIllegal 2.0.0 · 文档中心</span>
+      <span>最后更新：2026-07-14</span>
+    </div>
+  </footer>
+</body>
+</html>

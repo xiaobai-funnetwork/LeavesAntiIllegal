@@ -1,5 +1,3 @@
-image: docker.1ms.run/library/maven:3.9.9-eclipse-temurin-17
-
 stages:
   - clean
   - build
@@ -11,8 +9,9 @@ variables:
   GIT_TERMINAL_PROMPT: "0"
   GIT_HTTP_LOW_SPEED_LIMIT: "1024"
   GIT_HTTP_LOW_SPEED_TIME: "60"
+  MAVEN_HOME: "/volume2/1/gitlab-runner/maven/apache-maven-3.9.16"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version --settings .mvn/settings.xml -Dmaven.wagon.http.connectionTimeout=30000 -Dmaven.wagon.http.readTimeout=60000"
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_OPTS: "-Dmaven.repo.local=/volume2/1/gitlab-runner/m2/repository"
 
 cache:
   key: "maven-${CI_COMMIT_REF_SLUG}"
@@ -20,6 +19,7 @@ cache:
     - .m2/repository/
 
 before_script:
+  - export PATH="${MAVEN_HOME}/bin:/volume2/1/gitlab-runner/bin:${PATH}"
   - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
   - test -n "$RELEASE_VERSION"
   - echo "Building LeavesAntiIllegal ${RELEASE_VERSION}"
@@ -44,7 +44,6 @@ build:
 
 publish_modrinth:
   stage: publish
-  image: docker.1ms.run/library/alpine:3.20
   needs:
     - job: build
       artifacts: true
@@ -53,8 +52,7 @@ publish_modrinth:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: manual
   before_script:
-    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-    - apk add --no-cache curl jq
+    - export PATH="/volume2/1/gitlab-runner/bin:${PATH}"
     - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
     - export RELEASE_DESCRIPTION="$(cat Description.txt)"
     - test -n "$RELEASE_VERSION"
@@ -76,7 +74,6 @@ publish_modrinth:
 
 publish_gitlab_release:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
     - job: build
       artifacts: true
@@ -86,6 +83,7 @@ publish_gitlab_release:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: manual
   before_script:
+    - export PATH="/volume2/1/gitlab-runner/bin:${PATH}"
     - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
     - export RELEASE_DESCRIPTION="$(cat Description.txt)"
     - test -n "$RELEASE_VERSION"

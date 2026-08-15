@@ -13,11 +13,6 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version --settings .mvn/settings.xml -Dmaven.wagon.http.connectionTimeout=30000 -Dmaven.wagon.http.readTimeout=60000"
   MAVEN_OPTS: "-Dmaven.repo.local=/volume2/1/gitlab-runner/m2/repository"
 
-cache:
-  key: "maven-${CI_COMMIT_REF_SLUG}"
-  paths:
-    - .m2/repository/
-
 before_script:
   - export PATH="${MAVEN_HOME}/bin:/volume2/1/gitlab-runner/bin:${PATH}"
   - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"

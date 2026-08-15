@@ -35,7 +35,7 @@ build:
     name: "LeavesAntiIllegal-${RELEASE_VERSION}"
     expire_in: 30 days
     paths:
-      - "plugin/target/LeavesAntiIllegal-${RELEASE_VERSION}.jar"
+      - "plugin/target/LeavesAntiIllegal-*.jar"
 
 publish_modrinth:
   stage: publish

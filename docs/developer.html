@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 2.1.0 架构、线程、构建与扩展文档">
-  <title>开发者文档 | LeavesAntiIllegal 2.1.0</title>
+  <meta name="description" content="LeavesAntiIllegal 3.0.0 架构、线程、构建与扩展文档">
+  <title>开发者文档 | LeavesAntiIllegal 3.0.0</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
   <style>
@@ -14,10 +14,11 @@
 </head>
 <body>
   <button class="nav-toggle" type="button" aria-label="打开目录" aria-controls="sidebar" aria-expanded="false">☰</button>
+  <button class="language-switch language-switch-floating" type="button" data-language-switch aria-label="切换语言">English</button>
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="index.html" aria-label="返回文档首页">
       <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 2.1.0</span></span>
+      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 3.0.0</span></span>
     </a>
     <div class="search-wrap">
       <label for="doc-search">筛选本文档</label>
@@ -271,11 +272,11 @@
           <div class="code-toolbar"><span>双版本构建</span><button class="copy-button" type="button" data-copy-target="build-commands">复制</button></div>
           <pre id="build-commands"><code># 发布基线
 mvn clean package
-# => target/LeavesAntiIllegal-2.0.0.jar
+# => target/LeavesAntiIllegal-3.0.0.jar
 
 # 1.21.11 兼容编译
 mvn -Pleaves-1.21.11 clean package
-# => target-1.21.11/LeavesAntiIllegal-2.0.0.jar</code></pre>
+# => target/LeavesAntiIllegal-3.0.0.jar</code></pre>
         </div>
         <div class="table-wrap">
           <table>
@@ -320,7 +321,7 @@ mvn -Pleaves-1.21.11 clean package
           <li>根据bStats提供的指示，添加了类<code>Metrics.java</code>。来源：https://github.com/Bastian/bstats-metrics/blob/single-file/bukkit/Metrics.java</li>
           <li>在 <code>LeavesAntiIllegalPlugin</code>（主类）的<code>onEnable()</code>添加上报相关代码</li>
           <div class="code-block">
-            <div class="code-toolbar"><span>LeavesAntiIllegalPlugin.java/span><button class="copy-button" type="button" data-copy-target="package-tree">复制</button></div>
+            <div class="code-toolbar"><span>LeavesAntiIllegalPlugin.java</span><button class="copy-button" type="button" data-copy-target="package-tree">复制</button></div>
             <pre id="java"><code>import org.bukkit.plugin.java.JavaPlugin;
 
 public class ExamplePlugin extends JavaPlugin {
@@ -359,18 +360,18 @@ public class ExamplePlugin extends JavaPlugin {
         <div class="callout"><strong>发布产物选择</strong>推荐发布 1.21.10 基线产物，因为它使用两个目标中的较低 API 编译；1.21.11 profile 是 API 演进检查。若未来代码必须调用仅 1.21.11 存在的 API，应拆分适配层或单独发布版本。</div>
         <div class="code-block">
           <div class="code-toolbar"><span>发布前快速检查</span><button class="copy-button" type="button" data-copy-target="release-check">复制</button></div>
-          <pre id="release-check"><code>jar tf target/LeavesAntiIllegal-2.0.0.jar
-unzip -p target/LeavesAntiIllegal-2.0.0.jar plugin.yml
-unzip -p target/LeavesAntiIllegal-2.0.0.jar config.yml
-sha256sum target/LeavesAntiIllegal-2.0.0.jar</code></pre>
+          <pre id="release-check"><code>jar tf target/LeavesAntiIllegal-3.0.0.jar
+unzip -p target/LeavesAntiIllegal-3.0.0.jar plugin.yml
+unzip -p target/LeavesAntiIllegal-3.0.0.jar config.yml
+sha256sum target/LeavesAntiIllegal-3.0.0.jar</code></pre>
         </div>
       </section>
     </article>
 
     <footer class="doc-footer">
       <div class="doc-footer-inner">
-        <span>LeavesAntiIllegal 2.0.0 · 开发者文档</span>
-        <span>最后更新：2026-07-14 · API 来源见 <a href="https://github.com/LeavesMC/Leaves">Leaves 官方仓库</a></span>
+        <span>LeavesAntiIllegal 3.0.0 · 开发者文档</span>
+        <span>最后更新：2026-08-15 · API 来源见 <a href="https://github.com/LeavesMC/Leaves">Leaves 官方仓库</a></span>
       </div>
     </footer>
   </main>

@@ -1,4 +1,4 @@
-# LeavesAntiIllegal 2.0.0 默认配置；适用于 Leaves 1.21.10/1.21.11，修改后执行 /antiillegal reload 重载。
+# LeavesAntiIllegal 默认配置；适用于 Bukkit API 兼容服务端，修改后执行 /antiillegal reload 重载。
 # 时间单位说明：20 tick = 1 秒；数值越小扫描越频繁，服务器开销也会越高。
 config-version: 3 # 配置结构版本，仅用于识别配置代次；请勿手动改小，例如当前版本为 3。
 
@@ -18,13 +18,13 @@ messages: # 消息配置根节点；此行下方的缩进不可删除。
   # /antiillegal scan 完成后的消息；可用 {count}=本次删除的物品组数。
   scan-complete: "&a[反作弊] &e全服扫描完成，共移除 &f{count} &e个违禁物品" # 示例：{count}=3。
   # /antiillegal reload 真正重启全部扫描器后发送的消息；没有可替换占位符。
-  reload-success: "&a[反作弊] &e配置与全部扫描器已重新加载" # 重载在 Leaves 主线程执行，避免并发访问 Bukkit 状态。
+  reload-success: "&a[反作弊] &e配置与全部扫描器已重新加载" # 重载在 Bukkit 主线程执行，避免并发访问 Bukkit 状态。
   # 无 antiillegal.admin 权限执行管理命令时发送；没有可替换占位符。
   no-permission: "&c[反作弊] &e你没有权限执行此命令" # 可通过权限插件授予 antiillegal.admin。
 
 # 扫描器总配置；在线玩家、嵌套容器、已加载区块、离线玩家数据均可独立开关和限速。
 scanners: # 扫描器配置根节点；所有新增功能默认开启。
-  # 在线玩家扫描使用 Leaves/Bukkit 主线程定时任务，所有库存访问均保持线程安全。
+  # 在线玩家扫描使用 Bukkit 主线程定时任务，所有库存访问均保持线程安全。
   online-players: # 在线玩家背包与末影箱的定时扫描设置。
     # 是否定时扫描全部在线玩家；关闭后，拾取/点击等实时事件检测仍然工作。
     enabled: true # 默认 true；示例：临时排查性能时可设为 false。

@@ -70,7 +70,7 @@ public final class LoadedContainerScanner implements Listener {
             return;
         }
         if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Loaded container scanner must start on the Leaves main thread");
+            throw new IllegalStateException("Loaded container scanner must start on the Bukkit main thread");
         }
         active = true;
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -136,7 +136,7 @@ public final class LoadedContainerScanner implements Listener {
         Chunk chunk = ref.world().getChunkAt(ref.x(), ref.z());
         Set<Inventory> seenInventories = Collections.newSetFromMap(new IdentityHashMap<>());
         if (scanBlockContainers) {
-            for (BlockState state : chunk.getTileEntities(false)) {
+            for (BlockState state : chunk.getTileEntities()) {
                 if (!(state instanceof InventoryHolder holder)) {
                     continue;
                 }

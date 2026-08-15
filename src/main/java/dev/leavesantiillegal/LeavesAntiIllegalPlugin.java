@@ -49,7 +49,7 @@ public final class LeavesAntiIllegalPlugin extends JavaPlugin {
             markPlayerOnline(player.getUniqueId());
         }
         startScanners();
-        getLogger().info("LeavesAntiIllegal 已启用 - 兼容 Leaves 1.21.10/1.21.11");
+        getLogger().info("LeavesAntiIllegal 已启用 - 使用 Bukkit API");
         metrics.addCustomChart(
                 new Metrics.SimplePie("chart_id", () -> "My value")
         );
@@ -230,7 +230,7 @@ public final class LeavesAntiIllegalPlugin extends JavaPlugin {
 
     private void ensureMainThread() {
         if (!Bukkit.isPrimaryThread()) {
-            throw new IllegalStateException("Bukkit inventory/world operations must run on the Leaves main thread");
+            throw new IllegalStateException("Bukkit inventory/world operations must run on the Bukkit main thread");
         }
     }
 }

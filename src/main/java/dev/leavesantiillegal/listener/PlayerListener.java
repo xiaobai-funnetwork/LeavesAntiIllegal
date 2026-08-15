@@ -109,7 +109,7 @@ public final class PlayerListener implements Listener {
         ItemChecker.CheckResult result = checker.checkItem(item);
         if (result.isIllegal()) {
             event.setCancelled(true);
-            player.getInventory().removeItemAnySlot(item);
+            player.getInventory().removeItem(item);
             sendRemovedMessage(player, item, result);
         }
     }
@@ -125,7 +125,7 @@ public final class PlayerListener implements Listener {
         ItemChecker.CheckResult mainResult = checker.checkItem(mainHand);
         if (mainResult.isIllegal()) {
             event.setCancelled(true);
-            player.getInventory().removeItemAnySlot(mainHand);
+            player.getInventory().removeItem(mainHand);
             sendRemovedMessage(player, mainHand, mainResult);
             return;
         }

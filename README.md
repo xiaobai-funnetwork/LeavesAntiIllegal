@@ -1,8 +1,8 @@
-# LeavesAntiIllegal 2.0.0
+# LeavesAntiIllegal 3.0.0
 
-面向 Leaves 1.21.10 / 1.21.11 的违禁物品扫描插件，要求 Java 21。本项目从旧版
-FoliaAntiIllegal 恢复并迁移而来；2.0.0 已移除 Folia 专用调度 API，不再以 Folia
-为运行目标。
+基于 Bukkit API 的违禁物品扫描插件，要求 Java 21，可运行于 Spigot、Paper、Purpur、Leaves
+等 Bukkit API 兼容服务端。本项目从旧版 FoliaAntiIllegal 恢复并迁移而来，已移除 Folia
+专用调度 API。
 
 ## 扫描范围
 
@@ -19,8 +19,8 @@ FoliaAntiIllegal 恢复并迁移而来；2.0.0 已移除 Folia 专用调度 API�
 
 ## 安装
 
-1. 使用 Java 21 启动 Leaves 1.21.10 或 1.21.11。
-2. 将 `LeavesAntiIllegal-2.0.0.jar` 放入服务器的 `plugins/`。
+1. 使用 Java 21 启动 Bukkit API 兼容服务端（建议 1.21.x）。
+2. 将 `LeavesAntiIllegal-3.0.0.jar` 放入服务器的 `plugins/`。
 3. 启动一次服务器，检查 `plugins/LeavesAntiIllegal/config.yml`。
 4. 首次部署建议先把 `scanners.offline-player-data.dry-run` 设为 `true`，观察一个低峰窗口。
 5. 确认日志符合预期后改回 `false`，执行 `/antiillegal reload`。
@@ -31,7 +31,7 @@ FoliaAntiIllegal 恢复并迁移而来；2.0.0 已移除 Folia 专用调度 API�
 ## 从 FoliaAntiIllegal 迁移
 
 插件名已改变，因此数据目录从 `plugins/FoliaAntiIllegal/` 变为
-`plugins/LeavesAntiIllegal/`。不要直接用旧配置覆盖新配置：先让 2.0.0 生成带完整中文
+`plugins/LeavesAntiIllegal/`。不要直接用旧配置覆盖新配置：先让 3.0.0 生成带完整中文
 注释的新 `config.yml`，再把旧服的违禁材料、属性阈值、白名单和消息逐项合并。
 
 升级前请停止服务器并备份所有世界。旧 JAR 与新 JAR 不能同时加载；移除旧 JAR 后再
@@ -40,25 +40,16 @@ FoliaAntiIllegal 恢复并迁移而来；2.0.0 已移除 Folia 专用调度 API�
 
 ## 构建
 
-默认按 1.21.10 API 构建兼容基线：
+默认按 Spigot Bukkit API 构建兼容基线：
 
 ```bash
 mvn clean package
 ```
 
-输出：`target/LeavesAntiIllegal-2.0.0.jar`
+输出：`target/LeavesAntiIllegal-3.0.0.jar`
 
-按 1.21.11 API 做兼容编译：
-
-```bash
-mvn -Pleaves-1.21.11 clean package
-```
-
-输出：`target-1.21.11/LeavesAntiIllegal-2.0.0.jar`
-
-两种构建均使用 Leaves 官方快照仓库和 Java 21。Querz NBT 会被 shade 并重定位到
-`dev.leavesantiillegal.lib.querz`，服务器无需另装依赖。发布时建议使用 1.21.10 基线
-产物，并保留 1.21.11 配置作为持续兼容检查。
+构建使用 Spigot 官方 Bukkit API 快照和 Java 21。Querz NBT 会被 shade 并重定位到
+`dev.leavesantiillegal.lib.querz`，服务器无需另装依赖。
 
 ## 运行约束
 
@@ -67,7 +58,5 @@ mvn -Pleaves-1.21.11 clean package
 操作同一玩家数据。离线扫描遇到在线人数超过阈值或低峰窗口结束时会暂停/停止，不会
 把未完成的一轮记为成功。
 
-项目依赖与运行环境以 Leaves 官方资料为准：
-[Leaves 仓库](https://github.com/LeavesMC/Leaves)、
-[安装指南](https://docs.leavesmc.org/en/leaves/guides/getting-started)、
-[版本下载](https://leavesmc.org/downloads/leaves)。
+项目源码只依赖 Bukkit/Spigot 公共 API；Paper、Purpur、Leaves 等兼容服务端由其自身提供
+该 API。插件不调用 NMS、CraftBukkit 或任意服务端实现专用类。

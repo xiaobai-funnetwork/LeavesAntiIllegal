@@ -17,10 +17,10 @@
     </modules>
 
     <name>LeavesAntiIllegal</name>
-    <description>基于 Bukkit API 的玩家、容器与离线数据违禁物扫描器</description>
 
-    <properties>
-        <revision>3.1.0</revision>
+<properties>
+    <revision>3.1.1</revision>
+    <description>基于 Bukkit API 的玩家、容器与离线数据违禁物扫描器</description>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>

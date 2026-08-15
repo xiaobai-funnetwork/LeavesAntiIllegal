@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 3.1.0 架构、线程、构建与扩展文档">
-  <title>开发者文档 | LeavesAntiIllegal 3.1.0</title>
+  <meta name="description" content="LeavesAntiIllegal 3.1.1 架构、线程、构建与扩展文档">
+  <title>开发者文档 | LeavesAntiIllegal 3.1.1</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
   <style>
@@ -18,7 +18,7 @@
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="index.html" aria-label="返回文档首页">
       <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 3.1.0</span></span>
+      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 3.1.1</span></span>
     </a>
     <div class="search-wrap">
       <label for="doc-search">筛选本文档</label>
@@ -272,11 +272,11 @@
           <div class="code-toolbar"><span>多版本构建</span><button class="copy-button" type="button" data-copy-target="build-commands">复制</button></div>
           <pre id="build-commands"><code># 发布基线
 mvn clean package
-# => plugin/target/LeavesAntiIllegal-3.1.0.jar
+# => plugin/target/LeavesAntiIllegal-3.1.1.jar
 
 # 兼容 1.20 - 26.2 的统一产物
 mvn clean package
-# => plugin/target/LeavesAntiIllegal-3.1.0.jar</code></pre>
+# => plugin/target/LeavesAntiIllegal-3.1.1.jar</code></pre>
         </div>
         <div class="table-wrap">
           <table>
@@ -360,17 +360,17 @@ public class ExamplePlugin extends JavaPlugin {
         <div class="callout"><strong>发布产物选择</strong>发布以 Bukkit API 1.20.1 编译的统一产物。不要直接调用某个核心的私有类；若未来 Bukkit API 删除或改变公共方法，应通过反射适配或拆分版本适配层。</div>
         <div class="code-block">
           <div class="code-toolbar"><span>发布前快速检查</span><button class="copy-button" type="button" data-copy-target="release-check">复制</button></div>
-          <pre id="release-check"><code>jar tf plugin/target/LeavesAntiIllegal-3.1.0.jar
-unzip -p plugin/target/LeavesAntiIllegal-3.1.0.jar plugin.yml
-unzip -p plugin/target/LeavesAntiIllegal-3.1.0.jar config.yml
-sha256sum plugin/target/LeavesAntiIllegal-3.1.0.jar</code></pre>
+          <pre id="release-check"><code>jar tf plugin/target/LeavesAntiIllegal-3.1.1.jar
+unzip -p plugin/target/LeavesAntiIllegal-3.1.1.jar plugin.yml
+unzip -p plugin/target/LeavesAntiIllegal-3.1.1.jar config.yml
+sha256sum plugin/target/LeavesAntiIllegal-3.1.1.jar</code></pre>
         </div>
       </section>
     </article>
 
     <footer class="doc-footer">
       <div class="doc-footer-inner">
-        <span>LeavesAntiIllegal 3.1.0 · 开发者文档</span>
+        <span>LeavesAntiIllegal 3.1.1 · 开发者文档</span>
         <span>最后更新：2026-08-15 · API 来源见 <a href="https://github.com/LeavesMC/Leaves">Leaves 官方仓库</a></span>
       </div>
     </footer>

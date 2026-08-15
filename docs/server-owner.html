@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 3.1.0 服主安装、配置、迁移与恢复手册">
+  <meta name="description" content="LeavesAntiIllegal 3.1.1 服主安装、配置、迁移与恢复手册">
   <title>服主手册 | LeavesAntiIllegal</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
@@ -51,7 +51,7 @@
           <span class="meta-item ok">Minecraft 1.20 - 26.2</span>
           <span class="meta-item">Java 17+</span>
           <span class="meta-item">配置版本 3</span>
-          <span class="meta-item">插件版本 3.1.0</span>
+          <span class="meta-item">插件版本 3.1.1</span>
         </div>
       </div>
     </header>
@@ -80,7 +80,7 @@
         <ol class="step-list">
           <li><strong>停止服务器并做世界备份</strong>至少保留所有世界目录和现有 <code>plugins/</code>。</li>
           <li><strong>检查 Java 与核心</strong>使用 Java 17 或更高版本，核心版本为 Minecraft 1.20 至 26.2 的 Bukkit API 兼容服务端。</li>
-          <li><strong>放入插件</strong>将 <code>LeavesAntiIllegal-3.1.0.jar</code> 放到服务器 <code>plugins/</code>。</li>
+          <li><strong>放入插件</strong>将 <code>LeavesAntiIllegal-3.1.1.jar</code> 放到服务器 <code>plugins/</code>。</li>
           <li><strong>启动一次</strong>等待生成 <code>plugins/LeavesAntiIllegal/config.yml</code>，确认控制台出现启用日志。</li>
           <li><strong>先做演练</strong>把离线扫描的 <code>dry-run</code> 改成 <code>true</code>，重载后观察一个低峰窗口。</li>
         </ol>
@@ -104,7 +104,7 @@
         <p>项目名、插件名、主类和 Java 包均已更改。Bukkit 会因此使用新的数据目录，旧配置不会自动进入新插件。</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>项目</th><th>旧版</th><th>3.1.0</th></tr></thead>
+            <thead><tr><th>项目</th><th>旧版</th><th>3.1.1</th></tr></thead>
             <tbody>
               <tr><td>插件名</td><td><code>FoliaAntiIllegal</code></td><td><code>LeavesAntiIllegal</code></td></tr>
               <tr><td>数据目录</td><td><code>plugins/FoliaAntiIllegal/</code></td><td><code>plugins/LeavesAntiIllegal/</code></td></tr>

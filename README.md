@@ -1,4 +1,4 @@
-# LeavesAntiIllegal 3.1.0
+# LeavesAntiIllegal 3.1.1
 
 LeavesAntiIllegal is a Bukkit API based illegal-item scanner for Spigot, Paper, Purpur, Leaves, and other Bukkit-compatible servers. It requires Java 17 and supports Minecraft 1.20 through 26.2. The project was restored and migrated from FoliaAntiIllegal; it no longer depends on Folia-specific scheduling APIs.
 
@@ -22,7 +22,7 @@ The documentation consists of static HTML files and can be opened directly witho
 ## Installation
 
 1. Install Java 17 or newer and use a Bukkit API compatible server from Minecraft 1.20 through 26.2.
-2. Place `LeavesAntiIllegal-3.1.0.jar` in the server's `plugins/` directory.
+2. Place `LeavesAntiIllegal-3.1.1.jar` in the server's `plugins/` directory.
 3. Start the server once and inspect `plugins/LeavesAntiIllegal/config.yml`.
 4. For the first deployment, set `scanners.offline-player-data.dry-run` to `true` and observe one low-load window.
 5. After verifying the log output, set it to `false` and run `/antiillegal reload`.
@@ -31,7 +31,7 @@ All scanners are enabled by default. Before modifying offline player data, the p
 
 ## Migration From FoliaAntiIllegal
 
-The plugin directory changes from `plugins/FoliaAntiIllegal/` to `plugins/LeavesAntiIllegal/`. Do not directly overwrite the new configuration with the old one. Generate the complete 3.1.0 `config.yml` first, then merge illegal materials, attribute thresholds, whitelist entries, and messages from the old server configuration item by item.
+The plugin directory changes from `plugins/FoliaAntiIllegal/` to `plugins/LeavesAntiIllegal/`. Do not directly overwrite the new configuration with the old one. Generate the complete 3.1.1 `config.yml` first, then merge illegal materials, attribute thresholds, whitelist entries, and messages from the old server configuration item by item.
 
 Stop the server and back up all worlds before upgrading. Do not load the old and new JAR files together. After removing the old JAR, place the new version in the `plugins/` directory. The `/antiillegal` command, `/ai` and `/illegal` aliases, and `antiillegal.*` permission nodes remain unchanged.
 
@@ -46,7 +46,7 @@ mvn clean package
 The output file is:
 
 ```text
-plugin/target/LeavesAntiIllegal-3.1.0.jar
+plugin/target/LeavesAntiIllegal-3.1.1.jar
 ```
 
 The plugin depends only on the Bukkit public API. The Querz NBT library is shaded and relocated to `dev.leavesantiillegal.lib.querz`, so servers do not need to install another dependency.
@@ -80,7 +80,7 @@ The Modrinth publication uses the `bukkit` loader and declares Minecraft version
 
 ---
 
-# LeavesAntiIllegal 3.1.0
+# LeavesAntiIllegal 3.1.1
 
 LeavesAntiIllegal 是一个基于 Bukkit API 的违规物品扫描插件，兼容 Spigot、Paper、Purpur、Leaves 以及其他 Bukkit 兼容服务端。插件要求 Java 17，支持 Minecraft 1.20 至 26.2。本项目由 FoliaAntiIllegal 恢复并迁移而来，已经移除对 Folia 专用调度 API 的依赖。
 
@@ -104,7 +104,7 @@ LeavesAntiIllegal 是一个基于 Bukkit API 的违规物品扫描插件，兼�
 ## 安装
 
 1. 安装 Java 17 或更高版本，并使用 Minecraft 1.20 至 26.2 的 Bukkit API 兼容服务端。
-2. 将 `LeavesAntiIllegal-3.1.0.jar` 放入服务端的 `plugins/` 目录。
+2. 将 `LeavesAntiIllegal-3.1.1.jar` 放入服务端的 `plugins/` 目录。
 3. 启动一次服务端，检查 `plugins/LeavesAntiIllegal/config.yml`。
 4. 首次部署时，建议将 `scanners.offline-player-data.dry-run` 设置为 `true`，观察一个低负载时间窗口。
 5. 确认日志符合预期后，将其改为 `false`，并执行 `/antiillegal reload`。
@@ -113,7 +113,7 @@ LeavesAntiIllegal 是一个基于 Bukkit API 的违规物品扫描插件，兼�
 
 ## 从 FoliaAntiIllegal 迁移
 
-插件目录由 `plugins/FoliaAntiIllegal/` 改为 `plugins/LeavesAntiIllegal/`。不要直接使用旧配置覆盖新配置。请先生成完整的 3.1.0 `config.yml`，再逐项合并旧服务端配置中的违规材料、属性阈值、白名单和消息内容。
+插件目录由 `plugins/FoliaAntiIllegal/` 改为 `plugins/LeavesAntiIllegal/`。不要直接使用旧配置覆盖新配置。请先生成完整的 3.1.1 `config.yml`，再逐项合并旧服务端配置中的违规材料、属性阈值、白名单和消息内容。
 
 升级前请停止服务端并备份所有世界。旧 JAR 和新 JAR 不能同时加载。删除旧 JAR 后，再将新版本放入 `plugins/` 目录。`/antiillegal` 命令、`/ai` 和 `/illegal` 别名以及 `antiillegal.*` 权限节点保持不变。
 
@@ -128,7 +128,7 @@ mvn clean package
 输出文件：
 
 ```text
-plugin/target/LeavesAntiIllegal-3.1.0.jar
+plugin/target/LeavesAntiIllegal-3.1.1.jar
 ```
 
 插件只依赖 Bukkit 公共 API。Querz NBT 库会被 shade 并重定位到 `dev.leavesantiillegal.lib.querz`，服务端不需要额外安装依赖。

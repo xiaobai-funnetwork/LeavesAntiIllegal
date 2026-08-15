@@ -1,7 +1,6 @@
 stages:
   - clean
   - build
-  - publish
   - release
 
 variables:
@@ -15,8 +14,10 @@ variables:
 
 before_script:
   - export PATH="${MAVEN_HOME}/bin:/volume2/1/gitlab-runner/bin:${PATH}"
-  - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
-  - test -n "$RELEASE_VERSION"
+  - export BASE_VERSION="$(tr -d '\r\n' < version.txt)"
+  - test -n "$BASE_VERSION"
+  - export RELEASE_REVISION="$(date -u -d "$CI_PIPELINE_CREATED_AT" +%Y%m%d%H%M%S)"
+  - export RELEASE_VERSION="${BASE_VERSION}-${RELEASE_REVISION}"
   - echo "Building LeavesAntiIllegal ${RELEASE_VERSION}"
 
 clean:
@@ -37,47 +38,19 @@ build:
     paths:
       - "plugin/target/LeavesAntiIllegal-*.jar"
 
-publish_modrinth:
-  stage: publish
-  needs:
-    - job: build
-      artifacts: true
-  rules:
-    - if: '$CI_COMMIT_TAG'
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-  before_script:
-    - export PATH="/volume2/1/gitlab-runner/bin:${PATH}"
-    - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
-    - export RELEASE_DESCRIPTION="$(cat Description.txt)"
-    - test -n "$RELEASE_VERSION"
-    - test -n "$RELEASE_DESCRIPTION"
-    - test -n "$MODRINTH_TOKEN"
-    - test -n "$MODRINTH_PROJECT_ID"
-  script:
-    - export RELEASE_FILE="plugin/target/LeavesAntiIllegal-${RELEASE_VERSION}.jar"
-    - test -f "$RELEASE_FILE"
-    - export GAME_VERSIONS='["1.20","1.20.1","1.20.2","1.20.3","1.20.4","1.20.5","1.20.6","1.21","1.21.1","1.21.2","1.21.3","1.21.4","1.21.5","1.21.6","1.21.7","1.21.8","1.21.9","1.21.10","1.21.11","26.1","26.1.1","26.1.2","26.2"]'
-    - export MODRINTH_DATA_FILE="${CI_PROJECT_DIR}/modrinth-data.json"
-    - jq -n --arg project "$MODRINTH_PROJECT_ID" --arg version "$RELEASE_VERSION" --arg description "$RELEASE_DESCRIPTION" --argjson game_versions "$GAME_VERSIONS" '{project_id:$project,version_number:$version,name:("LeavesAntiIllegal " + $version),version_type:"release",loaders:["bukkit","paper","spigot","purpur"],game_versions:$game_versions,file_parts:["LeavesAntiIllegal-" + $version + ".jar"],dependencies:[],changelog:$description,featured:true,status:"listed"}' > "$MODRINTH_DATA_FILE"
-    - >-
-      curl --fail-with-body --silent --show-error --request POST
-      --header "Authorization: ${MODRINTH_TOKEN}"
-      --form "data=@${MODRINTH_DATA_FILE};type=application/json"
-      --form "file=@${RELEASE_FILE};type=application/java-archive"
-      "https://api.modrinth.com/v2/version"
-
 publish_gitlab_release:
   stage: release
   needs:
     - job: build
       artifacts: true
-    - job: publish_modrinth
   rules:
     - if: '$CI_COMMIT_TAG'
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   before_script:
     - export PATH="/volume2/1/gitlab-runner/bin:${PATH}"
-    - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
+    - export BASE_VERSION="$(tr -d '\r\n' < version.txt)"
+    - export RELEASE_REVISION="$(date -u -d "$CI_PIPELINE_CREATED_AT" +%Y%m%d%H%M%S)"
+    - export RELEASE_VERSION="${BASE_VERSION}-${RELEASE_REVISION}"
     - export RELEASE_DESCRIPTION="$(cat Description.txt)"
     - test -n "$RELEASE_VERSION"
     - test -n "$RELEASE_DESCRIPTION"

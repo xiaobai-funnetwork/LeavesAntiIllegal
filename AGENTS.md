@@ -11,7 +11,7 @@ Server-version adapters live in `versions/v1_20_1`, `versions/v1_21`, and `versi
 - `mvn -s .mvn/settings.xml clean package` compiles every module and creates `plugin/target/LeavesAntiIllegal-<version>.jar`.
 - `mvn -s .mvn/settings.xml test` runs all configured Maven tests.
 - `mvn -pl plugin -am -s .mvn/settings.xml package` builds the plugin and all required adapter modules.
-- `mvn -Drevision=3.1.0 clean package` overrides the CI-friendly version property; release builds obtain this value from `version.txt`.
+- `mvn -Drevision=3.1.1 clean package` overrides the CI-friendly version property; release builds obtain this value from `version.txt`.
 
 Use JDK 17 or newer. For local runtime checks, place the packaged JAR in a disposable Bukkit-compatible server's `plugins/` directory and inspect startup logs and generated configuration.
 

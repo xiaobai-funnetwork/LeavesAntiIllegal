@@ -131,3 +131,42 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "LeavesAntiIllegal ${version}" \
             --notes-file Description.txt
+
+  publish_modrinth:
+    name: Publish to Modrinth
+    runs-on: ubuntu-24.04
+    needs: [build, release]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: echo "version=$(tr -d '\r\n' < version.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: LeavesAntiIllegal-${{ steps.version.outputs.version }}
+          path: plugin/target
+
+      - name: Publish version
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          MODRINTH_PROJECT_ID: ${{ secrets.MODRINTH_PROJECT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          file="plugin/target/LeavesAntiIllegal-${version}.jar"
+          test -f "$file"
+          test -n "$MODRINTH_TOKEN"
+          test -n "$MODRINTH_PROJECT_ID"
+          game_versions='["1.20","1.20.1","1.20.2","1.20.3","1.20.4","1.20.5","1.20.6","1.21","1.21.1","1.21.2","1.21.3","1.21.4","1.21.5","1.21.6","1.21.7","1.21.8","1.21.9","1.21.10","1.21.11","26.1","26.1.1","26.1.2","26.2"]'
+          jq -n --arg project "$MODRINTH_PROJECT_ID" --arg version "$version" --arg description "$(cat Description.txt)" --argjson game_versions "$game_versions" '{project_id:$project,version_number:$version,name:("LeavesAntiIllegal " + $version),version_type:"release",loaders:["bukkit","paper","spigot","purpur"],game_versions:$game_versions,file_parts:["LeavesAntiIllegal-" + $version + ".jar"],dependencies:[],changelog:$description,featured:true,status:"listed"}' > modrinth-data.json
+          curl --fail-with-body --silent --show-error --request POST \
+            --header "Authorization: ${MODRINTH_TOKEN}" \
+            --form "data=@modrinth-data.json;type=application/json" \
+            --form "file=@${file};type=application/java-archive" \
+            "https://api.modrinth.com/v2/version"

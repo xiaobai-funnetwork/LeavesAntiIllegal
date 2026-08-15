@@ -1,5 +1,5 @@
 name: LeavesAntiIllegal
-version: '2.0.0'
+version: '2.1.0'
 main: dev.leavesantiillegal.LeavesAntiIllegalPlugin
 api-version: '1.21'
 description: 面向 Leaves 1.21.10/1.21.11，扫描玩家、容器与离线数据中的违禁物品

@@ -1,4 +1,4 @@
-image: maven:3.9.16-eclipse-temurin-17
+image: docker.m.daocloud.io/library/maven:3.9.16-eclipse-temurin-17
 
 stages:
   - clean
@@ -7,7 +7,11 @@ stages:
   - release
 
 variables:
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+  GIT_DEPTH: "1"
+  GIT_TERMINAL_PROMPT: "0"
+  GIT_HTTP_LOW_SPEED_LIMIT: "1024"
+  GIT_HTTP_LOW_SPEED_TIME: "60"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version --settings .mvn/settings.xml -Dmaven.wagon.http.connectionTimeout=30000 -Dmaven.wagon.http.readTimeout=60000"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
@@ -40,7 +44,7 @@ build:
 
 publish_modrinth:
   stage: publish
-  image: alpine:3.20
+  image: docker.m.daocloud.io/library/alpine:3.20
   needs:
     - job: build
       artifacts: true
@@ -49,6 +53,7 @@ publish_modrinth:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: manual
   before_script:
+    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     - apk add --no-cache curl jq
     - export RELEASE_VERSION="$(tr -d '\r\n' < version.txt)"
     - export RELEASE_DESCRIPTION="$(cat Description.txt)"

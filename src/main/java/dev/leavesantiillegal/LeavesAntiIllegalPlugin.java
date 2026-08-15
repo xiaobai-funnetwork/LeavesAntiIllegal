@@ -33,6 +33,9 @@ public final class LeavesAntiIllegalPlugin extends JavaPlugin {
         int pluginId = 33374;
         Metrics metrics = new Metrics(this, pluginId);
         instance = this;
+        if (!VersionRuntime.initialize(this)) {
+            return;
+        }
         saveDefaultConfig();
         reloadRuleSnapshot();
 

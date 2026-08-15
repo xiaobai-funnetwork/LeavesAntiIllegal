@@ -1,7 +1,7 @@
 name: LeavesAntiIllegal
-version: '3.0.0'
+version: '${project.version}'
 main: dev.leavesantiillegal.LeavesAntiIllegalPlugin
-api-version: '1.21'
+api-version: '1.20'
 description: 基于 Bukkit API 扫描玩家、容器与离线数据中的违禁物品
 authors: [NebulaHost]
 prefix: LeavesAntiIllegal

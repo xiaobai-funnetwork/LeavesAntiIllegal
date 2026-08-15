@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="LeavesAntiIllegal文档中心：服主部署手册与开发者技术参考">
-  <title>文档中心 | LeavesAntiIllegal 3.0.0</title>
+  <title>文档中心 | LeavesAntiIllegal 3.1.0</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
 </head>
@@ -13,7 +13,7 @@
     <div class="landing-nav-inner">
       <a class="landing-brand" href="index.html" aria-label="LeavesAntiIllegal 文档首页">
         <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-        <span><strong>LeavesAntiIllegal</strong><small>Documentation · 3.0.0</small></span>
+        <span><strong>LeavesAntiIllegal</strong><small>Documentation · 3.1.0</small></span>
       </a>
       <nav class="landing-links" aria-label="文档导航">
         <a href="server-owner.html">服主手册</a>
@@ -30,15 +30,15 @@
         <div>
           <p class="eyebrow">Leaves server protection / Documentation</p>
           <h1>从部署到扩展，快速了解 LeavesAntiIllegal</h1>
-          <p class="lede">面向 Leaves 1.21.10 / 1.21.11 的违禁物品扫描插件，覆盖在线玩家、已加载容器与离线玩家数据。</p>
+          <p class="lede">面向 Minecraft 1.20 至 26.2 Bukkit API 服务端的违禁物品扫描插件，覆盖在线玩家、已加载容器与离线玩家数据。</p>
           <div class="landing-actions">
             <a class="button primary" href="server-owner.html">开始部署</a>
             <a class="button secondary" href="developer.html#architecture">查看架构</a>
           </div>
           <div class="meta-strip" aria-label="兼容信息">
-            <span class="meta-item ok">Leaves 1.21.10 / 1.21.11</span>
-            <span class="meta-item">Java 21</span>
-            <span class="meta-item">插件 3.0.0</span>
+            <span class="meta-item ok">Minecraft 1.20 - 26.2</span>
+            <span class="meta-item">Java 17+</span>
+            <span class="meta-item">插件 3.1.0</span>
             <span class="meta-item">配置版本 3</span>
           </div>
         </div>
@@ -89,7 +89,7 @@
           <span class="section-kicker">Quick start</span>
           <h2 id="quick-start">三步开始使用</h2>
           <ol class="step-list landing-steps">
-            <li><strong>准备运行环境</strong>使用 Java 21 启动 Leaves 1.21.10 或 1.21.11。</li>
+            <li><strong>准备运行环境</strong>使用 Java 17 或更高版本启动 1.20 至 26.2 的 Bukkit API 服务端。</li>
             <li><strong>安装并生成配置</strong>把 JAR 放入 <code>plugins/</code>，启动一次服务器。</li>
             <li><strong>先演练离线扫描</strong>首次部署建议启用 <code>dry-run</code>，确认日志后再写回。</li>
           </ol>
@@ -99,10 +99,10 @@
           <pre><code>mvn clean package
 
 # 输出
-target/LeavesAntiIllegal-3.0.0.jar</code></pre>
+plugin/target/LeavesAntiIllegal-3.1.0.jar</code></pre>
           <div class="landing-command-note">
-            <strong>需要 1.21.11 兼容编译？</strong>
-            <code>mvn -Pleaves-1.21.11 clean package</code>
+            <strong>需要指定 API 基线？</strong>
+            <code>mvn clean package</code>
           </div>
         </div>
       </div>
@@ -123,7 +123,7 @@ target/LeavesAntiIllegal-3.0.0.jar</code></pre>
 
   <footer class="landing-footer">
     <div class="landing-shell">
-      <span>LeavesAntiIllegal 3.0.0 · 文档中心</span>
+      <span>LeavesAntiIllegal 3.1.0 · 文档中心</span>
       <span>最后更新：2026-08-15</span>
     </div>
   </footer>

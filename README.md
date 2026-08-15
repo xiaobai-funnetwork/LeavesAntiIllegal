@@ -1,6 +1,6 @@
-# LeavesAntiIllegal 3.0.0
+# LeavesAntiIllegal 3.1.0
 
-基于 Bukkit API 的违禁物品扫描插件，要求 Java 21，可运行于 Spigot、Paper、Purpur、Leaves
+基于 Bukkit API 的违禁物品扫描插件，要求 Java 17，可运行于 Minecraft 1.20 至 26.2 的 Spigot、Paper、Purpur、Leaves
 等 Bukkit API 兼容服务端。本项目从旧版 FoliaAntiIllegal 恢复并迁移而来，已移除 Folia
 专用调度 API。
 
@@ -19,8 +19,8 @@
 
 ## 安装
 
-1. 使用 Java 21 启动 Bukkit API 兼容服务端（建议 1.21.x）。
-2. 将 `LeavesAntiIllegal-3.0.0.jar` 放入服务器的 `plugins/`。
+1. 使用 Java 17 或更高版本启动 Bukkit API 兼容服务端（支持 1.20 至 26.2）。
+2. 将 `LeavesAntiIllegal-3.1.0.jar` 放入服务器的 `plugins/`。
 3. 启动一次服务器，检查 `plugins/LeavesAntiIllegal/config.yml`。
 4. 首次部署建议先把 `scanners.offline-player-data.dry-run` 设为 `true`，观察一个低峰窗口。
 5. 确认日志符合预期后改回 `false`，执行 `/antiillegal reload`。
@@ -31,7 +31,7 @@
 ## 从 FoliaAntiIllegal 迁移
 
 插件名已改变，因此数据目录从 `plugins/FoliaAntiIllegal/` 变为
-`plugins/LeavesAntiIllegal/`。不要直接用旧配置覆盖新配置：先让 3.0.0 生成带完整中文
+`plugins/LeavesAntiIllegal/`。不要直接用旧配置覆盖新配置：先让 3.1.0 生成带完整中文
 注释的新 `config.yml`，再把旧服的违禁材料、属性阈值、白名单和消息逐项合并。
 
 升级前请停止服务器并备份所有世界。旧 JAR 与新 JAR 不能同时加载；移除旧 JAR 后再
@@ -46,10 +46,12 @@
 mvn clean package
 ```
 
-输出：`target/LeavesAntiIllegal-3.0.0.jar`
+输出：`plugin/target/LeavesAntiIllegal-3.1.0.jar`
 
-构建使用 Spigot 官方 Bukkit API 快照和 Java 21。Querz NBT 会被 shade 并重定位到
+构建使用 Spigot 官方 Bukkit API 1.20.1 基线和 Java 17。插件只依赖 Bukkit 公共 API，面向 1.20 至 26.2 保持向后兼容；Querz NBT 会被 shade 并重定位到
 `dev.leavesantiillegal.lib.querz`，服务器无需另装依赖。
+
+版本相关实现按 Dominion 风格拆分在 `versions/`：`v1_20_1` 处理 1.20.x，`v1_21` 处理 1.21.x，`v26_2` 处理 26.2.x。启动时根据 Bukkit 版本加载对应适配器，公共扫描逻辑不依赖服务端私有实现。
 
 ## 运行约束
 
@@ -60,3 +62,13 @@ mvn clean package
 
 项目源码只依赖 Bukkit/Spigot 公共 API；Paper、Purpur、Leaves 等兼容服务端由其自身提供
 该 API。插件不调用 NMS、CraftBukkit 或任意服务端实现专用类。
+
+## GitLab CI 发布
+
+版本号维护在根目录 `version.txt`，描述维护在 `Description.txt`。GitLab CI 会先执行
+clean，再执行标准 Maven 构建，最后把 `plugin/target/LeavesAntiIllegal-<version>.jar`
+发布到 Modrinth。发布任务默认在默认分支手动执行，提交 Tag 时自动执行。
+
+请在 GitLab 项目 CI/CD Variables 中配置 `MODRINTH_TOKEN` 和
+`MODRINTH_PROJECT_ID`，其中 Token 应设为 Masked/Protected。Modrinth 发布使用
+`bukkit` loader，并勾选 Minecraft 1.20 至 26.2 的版本列表。

@@ -10,6 +10,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.ListTag;
 import net.querz.nbt.tag.NumberTag;
 import net.querz.nbt.tag.Tag;
+import dev.leavesantiillegal.VersionRuntime;
 import org.bukkit.Material;
 import org.bukkit.Bukkit;
 import org.bukkit.Registry;
@@ -160,7 +161,9 @@ public final class NbtItemChecker {
             return 0;
         }
         int removed = 0;
-        CompoundTag components = item.getCompoundTag("components");
+        CompoundTag components = VersionRuntime.supportsModernItemData()
+                ? item.getCompoundTag("components")
+                : null;
         if (components != null) {
             ListTag<?> container = components.getListTag("minecraft:container");
             if (isCompoundList(container)) {
@@ -225,7 +228,9 @@ public final class NbtItemChecker {
             }
         }
 
-        CompoundTag components = item.getCompoundTag("components");
+        CompoundTag components = VersionRuntime.supportsModernItemData()
+                ? item.getCompoundTag("components")
+                : null;
         CompoundTag legacyTag = item.getCompoundTag("tag");
         if (checkOverpoweredEnchants) {
             String reason = checkComponentEnchantments(components);

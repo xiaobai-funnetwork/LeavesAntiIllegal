@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 3.0.0 架构、线程、构建与扩展文档">
-  <title>开发者文档 | LeavesAntiIllegal 3.0.0</title>
+  <meta name="description" content="LeavesAntiIllegal 3.1.0 架构、线程、构建与扩展文档">
+  <title>开发者文档 | LeavesAntiIllegal 3.1.0</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
   <style>
@@ -18,7 +18,7 @@
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="index.html" aria-label="返回文档首页">
       <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 3.0.0</span></span>
+      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 3.1.0</span></span>
     </a>
     <div class="search-wrap">
       <label for="doc-search">筛选本文档</label>
@@ -53,8 +53,8 @@
         <h1>LeavesAntiIllegal 开发者文档</h1>
         <p class="lede">说明从 Folia 调度模型迁移到 Leaves/Bukkit 后的模块边界、线程所有权、离线 NBT 写入协议和双版本构建方法。</p>
         <div class="meta-strip" aria-label="技术基线">
-          <span class="meta-item ok">Leaves API 1.21.10 / 1.21.11</span>
-          <span class="meta-item">Java 21</span>
+          <span class="meta-item ok">Bukkit API 1.20 - 26.2</span>
+          <span class="meta-item">Java 17+</span>
           <span class="meta-item">Maven</span>
           <span class="meta-item">Querz NBT 6.1</span>
         </div>
@@ -67,13 +67,13 @@
       <section class="doc-section" id="contract">
         <span class="section-kicker">01 / Compatibility</span>
         <h2>兼容契约</h2>
-        <p>代码以 Leaves 1.21.10 API 为发布基线，同时通过 Maven profile 使用 Leaves 1.21.11 API 重新编译。线上产物不直接调用 Leaves 私有实现，只依赖 Bukkit/Paper 公开类型和 Bukkit 调度器。</p>
+        <p>代码以 Spigot Bukkit API 1.20.1 为发布基线。线上产物不调用任何核心私有实现，只依赖 Bukkit/Paper 公开类型和 Bukkit 调度器，因此可运行于 1.20 至 26.2 的兼容服务端。</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>维度</th><th>约束</th><th>实现</th></tr></thead>
             <tbody>
-              <tr><td>Java</td><td>运行与编译均为 21</td><td><code>maven.compiler.release=21</code></td></tr>
-              <tr><td>服务端</td><td>Leaves 1.21.10 / 1.21.11</td><td>默认 API 1.21.10，profile 覆盖到 1.21.11</td></tr>
+              <tr><td>Java</td><td>运行与编译均为 17+</td><td><code>maven.compiler.release=17</code></td></tr>
+              <tr><td>服务端</td><td>Bukkit API 1.20 - 26.2</td><td>以 Spigot API 1.20.1 编译，向前兼容公共 API</td></tr>
               <tr><td>线程</td><td>Bukkit 世界状态只在主线程访问</td><td><code>BukkitScheduler</code> sync task</td></tr>
               <tr><td>离线 NBT</td><td>文件 I/O 不阻塞主线程</td><td>异步枚举、解析、备份、写回</td></tr>
               <tr><td>插件标识</td><td>与旧 Folia 项目隔离</td><td><code>dev.leavesantiillegal</code> / <code>LeavesAntiIllegal</code></td></tr>
@@ -226,7 +226,7 @@
           <li><strong>属性</strong>七类属性按 modifier amount 绝对值比较。</li>
           <li><strong>不可破坏</strong>配置启用时，存在对应标记即判违。</li>
         </ol>
-        <p>Leaves 1.21.10 的属性枚举已去除旧 <code>GENERIC_*</code> 常量依赖。在线检查通过 namespaced key 的 key 部分映射阈值，同时接受 <code>generic.attack_damage</code> 等旧键形式。</p>
+        <p>属性检查不依赖核心私有实现，通过 Bukkit 属性键映射阈值，同时接受 <code>generic.attack_damage</code> 等旧键形式。</p>
       </section>
 
       <section class="doc-section" id="source-map">
@@ -267,27 +267,27 @@
       <section class="doc-section" id="build">
         <span class="section-kicker">11 / Build</span>
         <h2>构建与依赖</h2>
-        <p>Maven 默认解析 Leaves 1.21.10 快照 API，<code>leaves-1.21.11</code> profile 只覆盖 API 版本和输出目录，确保同一份源码接受两个 API 编译器检查。</p>
+        <p>Maven 默认解析 Spigot Bukkit API 1.20.1，使用 Java 17 编译。运行时由 1.20 至 26.2 的兼容服务端提供 Bukkit API，不将服务端 API 打包进插件。</p>
         <div class="code-block">
-          <div class="code-toolbar"><span>双版本构建</span><button class="copy-button" type="button" data-copy-target="build-commands">复制</button></div>
+          <div class="code-toolbar"><span>多版本构建</span><button class="copy-button" type="button" data-copy-target="build-commands">复制</button></div>
           <pre id="build-commands"><code># 发布基线
 mvn clean package
-# => target/LeavesAntiIllegal-3.0.0.jar
+# => plugin/target/LeavesAntiIllegal-3.1.0.jar
 
-# 1.21.11 兼容编译
-mvn -Pleaves-1.21.11 clean package
-# => target/LeavesAntiIllegal-3.0.0.jar</code></pre>
+# 兼容 1.20 - 26.2 的统一产物
+mvn clean package
+# => plugin/target/LeavesAntiIllegal-3.1.0.jar</code></pre>
         </div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>依赖</th><th>范围</th><th>发布行为</th></tr></thead>
             <tbody>
-              <tr><td><code>org.leavesmc.leaves:leaves-api</code></td><td><code>provided</code></td><td>由服务器提供，不打入 JAR。</td></tr>
+              <tr><td><code>org.spigotmc:spigot-api:1.20.1</code></td><td><code>provided</code></td><td>由服务器提供，不打入 JAR。</td></tr>
               <tr><td><code>com.github.Querz:NBT:6.1</code></td><td>compile</td><td>shade 到 JAR，并重定位为 <code>dev.leavesantiillegal.lib.querz</code>。</td></tr>
             </tbody>
           </table>
         </div>
-        <p>仓库使用 <code>https://repo.leavesmc.org/snapshots/</code>。API 是快照版本，CI 应缓存 Maven 仓库但仍定期刷新，并在刷新后重新跑双版本编译。</p>
+        <p>构建使用 Spigot 官方快照仓库。版本实现位于 <code>versions/v1_20_1</code>、<code>versions/v1_21</code> 和 <code>versions/v26_2</code>，CI 应分别编译这些模块并重新组装统一 JAR。</p>
       </section>
 
       <section class="doc-section" id="extension">
@@ -348,29 +348,29 @@ public class ExamplePlugin extends JavaPlugin {
         <span class="section-kicker">13 / Verification</span>
         <h2>验证与发布</h2>
         <ul class="checklist">
-          <li>默认构建通过 Leaves 1.21.10 API 编译。</li>
-          <li><code>leaves-1.21.11</code> profile 通过 1.21.11 API 编译。</li>
+          <li>默认构建通过 Spigot Bukkit API 1.20.1 编译。</li>
+          <li>同一份 Java 17 字节码面向 1.20 至 26.2 的 Bukkit API 兼容服务端运行。</li>
           <li>JAR 内 <code>plugin.yml</code> 的 name、version、main 与 Maven 坐标一致。</li>
-          <li>JAR 不包含 Leaves API，但包含已重定位的 Querz NBT 类。</li>
+          <li>JAR 不包含 Bukkit API，但包含已重定位的 Querz NBT 类和版本实现。</li>
           <li>默认 <code>config.yml</code> 能被 SnakeYAML 解析，且关键扫描器默认开启。</li>
           <li>合成 NBT 覆盖材料黑名单、32K 附魔、堆叠、属性、现代/旧版嵌套容器。</li>
           <li>静态文档在桌面与移动视口无横向正文溢出，搜索、目录和复制按钮可用。</li>
-          <li>在隔离的 Leaves 测试服完成启动、重载、玩家扫描、容器扫描和离线备份恢复。</li>
+          <li>在隔离的 1.20、1.21 和 26.2 测试服完成启动、重载、玩家扫描、容器扫描和离线备份恢复。</li>
         </ul>
-        <div class="callout"><strong>发布产物选择</strong>推荐发布 1.21.10 基线产物，因为它使用两个目标中的较低 API 编译；1.21.11 profile 是 API 演进检查。若未来代码必须调用仅 1.21.11 存在的 API，应拆分适配层或单独发布版本。</div>
+        <div class="callout"><strong>发布产物选择</strong>发布以 Bukkit API 1.20.1 编译的统一产物。不要直接调用某个核心的私有类；若未来 Bukkit API 删除或改变公共方法，应通过反射适配或拆分版本适配层。</div>
         <div class="code-block">
           <div class="code-toolbar"><span>发布前快速检查</span><button class="copy-button" type="button" data-copy-target="release-check">复制</button></div>
-          <pre id="release-check"><code>jar tf target/LeavesAntiIllegal-3.0.0.jar
-unzip -p target/LeavesAntiIllegal-3.0.0.jar plugin.yml
-unzip -p target/LeavesAntiIllegal-3.0.0.jar config.yml
-sha256sum target/LeavesAntiIllegal-3.0.0.jar</code></pre>
+          <pre id="release-check"><code>jar tf plugin/target/LeavesAntiIllegal-3.1.0.jar
+unzip -p plugin/target/LeavesAntiIllegal-3.1.0.jar plugin.yml
+unzip -p plugin/target/LeavesAntiIllegal-3.1.0.jar config.yml
+sha256sum plugin/target/LeavesAntiIllegal-3.1.0.jar</code></pre>
         </div>
       </section>
     </article>
 
     <footer class="doc-footer">
       <div class="doc-footer-inner">
-        <span>LeavesAntiIllegal 3.0.0 · 开发者文档</span>
+        <span>LeavesAntiIllegal 3.1.0 · 开发者文档</span>
         <span>最后更新：2026-08-15 · API 来源见 <a href="https://github.com/LeavesMC/Leaves">Leaves 官方仓库</a></span>
       </div>
     </footer>

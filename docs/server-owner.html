@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 3.0.0 服主安装、配置、迁移与恢复手册">
+  <meta name="description" content="LeavesAntiIllegal 3.1.0 服主安装、配置、迁移与恢复手册">
   <title>服主手册 | LeavesAntiIllegal</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
@@ -46,12 +46,12 @@
       <div class="header-inner">
         <p class="eyebrow">运维参考 / Server owner guide</p>
         <h1>LeavesAntiIllegal 服主手册</h1>
-        <p class="lede">用于部署、配置和维护 Leaves 1.21.10 / 1.21.11 上的在线玩家、已加载容器与离线玩家数据扫描。</p>
+        <p class="lede">用于部署、配置和维护 Minecraft 1.20 至 26.2 Bukkit API 服务端上的在线玩家、已加载容器与离线玩家数据扫描。</p>
         <div class="meta-strip" aria-label="兼容信息">
-          <span class="meta-item ok">Leaves 1.21.10 / 1.21.11</span>
-          <span class="meta-item">Java 21</span>
+          <span class="meta-item ok">Minecraft 1.20 - 26.2</span>
+          <span class="meta-item">Java 17+</span>
           <span class="meta-item">配置版本 3</span>
-          <span class="meta-item">插件版本 3.0.0</span>
+          <span class="meta-item">插件版本 3.1.0</span>
         </div>
       </div>
     </header>
@@ -62,7 +62,7 @@
       <section class="doc-section" id="overview">
         <span class="section-kicker">01 / 适用范围</span>
         <h2>先确认运行环境</h2>
-        <p>此版本只以 Leaves 的标准 Bukkit 主线程模型为目标，不再使用 Folia 区域调度器。插件已分别通过 Leaves 1.21.10 与 1.21.11 API 编译，服务器必须使用 Java 21。</p>
+        <p>此版本以标准 Bukkit 主线程模型为目标，不再使用 Folia 区域调度器。插件以 Bukkit API 1.20.1 编译，可运行于 1.20 至 26.2 的 Bukkit API 兼容服务端，服务器需要 Java 17 或更高版本。</p>
         <div class="metric-grid">
           <div class="metric"><strong>在线数据</strong><span>背包、盔甲、副手、光标和末影箱。</span></div>
           <div class="metric"><strong>世界容器</strong><span>只处理当前已加载区块，不主动加载新区块。</span></div>
@@ -79,15 +79,15 @@
         <h2>全新安装</h2>
         <ol class="step-list">
           <li><strong>停止服务器并做世界备份</strong>至少保留所有世界目录和现有 <code>plugins/</code>。</li>
-          <li><strong>检查 Java 与核心</strong>使用 Java 21，核心版本为 Leaves 1.21.10 或 1.21.11。</li>
-          <li><strong>放入插件</strong>将 <code>LeavesAntiIllegal-3.0.0.jar</code> 放到服务器 <code>plugins/</code>。</li>
+          <li><strong>检查 Java 与核心</strong>使用 Java 17 或更高版本，核心版本为 Minecraft 1.20 至 26.2 的 Bukkit API 兼容服务端。</li>
+          <li><strong>放入插件</strong>将 <code>LeavesAntiIllegal-3.1.0.jar</code> 放到服务器 <code>plugins/</code>。</li>
           <li><strong>启动一次</strong>等待生成 <code>plugins/LeavesAntiIllegal/config.yml</code>，确认控制台出现启用日志。</li>
           <li><strong>先做演练</strong>把离线扫描的 <code>dry-run</code> 改成 <code>true</code>，重载后观察一个低峰窗口。</li>
         </ol>
         <div class="code-block">
           <div class="code-toolbar"><span>目录结果</span><button class="copy-button" type="button" data-copy-target="install-tree">复制</button></div>
           <pre id="install-tree"><code>server/
-├── leaves-1.21.10-or-1.21.11.jar
+├── server-1.20-to-26.2.jar
 ├── plugins/
 │   ├── LeavesAntiIllegal-{version}.jar
 │   └── LeavesAntiIllegal/
@@ -104,11 +104,11 @@
         <p>项目名、插件名、主类和 Java 包均已更改。Bukkit 会因此使用新的数据目录，旧配置不会自动进入新插件。</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>项目</th><th>旧版</th><th>3.0.0</th></tr></thead>
+            <thead><tr><th>项目</th><th>旧版</th><th>3.1.0</th></tr></thead>
             <tbody>
               <tr><td>插件名</td><td><code>FoliaAntiIllegal</code></td><td><code>LeavesAntiIllegal</code></td></tr>
               <tr><td>数据目录</td><td><code>plugins/FoliaAntiIllegal/</code></td><td><code>plugins/LeavesAntiIllegal/</code></td></tr>
-              <tr><td>目标核心</td><td>Folia / Paper 旧目标</td><td>Leaves 1.21.10 / 1.21.11</td></tr>
+              <tr><td>目标核心</td><td>Folia / Paper 旧目标</td><td>Bukkit API 1.20 - 26.2</td></tr>
               <tr><td>命令与权限</td><td><code>/antiillegal</code>、<code>antiillegal.*</code></td><td>保持不变</td></tr>
             </tbody>
           </table>
@@ -299,7 +299,7 @@
         <h2>常见问题</h2>
         <h3>插件未加载或显示红色</h3>
         <ul>
-          <li>确认服务端是 Leaves 1.21.10 / 1.21.11，并使用 Java 21。</li>
+          <li>确认服务端版本在 1.20 至 26.2 范围内，并使用 Java 17 或更高版本。</li>
           <li>确认 JAR 名为 <code>LeavesAntiIllegal-{version}.jar</code>，没有同时保留旧版 JAR。</li>
           <li>从控制台第一段异常开始检查，不要只看最后一行。</li>
         </ul>
@@ -329,7 +329,7 @@
         <h2>正式上线检查表</h2>
         <ul class="checklist">
           <li>已备份全部世界与旧插件数据目录。</li>
-          <li>服务器为 Leaves 1.21.10 / 1.21.11，运行 Java 21。</li>
+          <li>服务器版本为 1.20 至 26.2，运行 Java 17 或更高版本。</li>
           <li>旧 FoliaAntiIllegal JAR 已移除，没有重复加载。</li>
           <li>已从新配置出发逐项合并规则，而非覆盖整个文件。</li>
           <li>已检查 <code>PLAYER_HEAD</code>、不可破坏物品、自定义附魔和 RPG 属性。</li>

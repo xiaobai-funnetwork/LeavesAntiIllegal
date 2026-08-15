@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LeavesAntiIllegal.iml" filepath="$PROJECT_DIR$/LeavesAntiIllegal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugin/LeavesAntiIllegal-plugin.iml" filepath="$PROJECT_DIR$/plugin/LeavesAntiIllegal-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/versions/v1_20_1/LeavesAntiIllegal-v1_20_1.iml" filepath="$PROJECT_DIR$/versions/v1_20_1/LeavesAntiIllegal-v1_20_1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/versions/v1_21/LeavesAntiIllegal-v1_21.iml" filepath="$PROJECT_DIR$/versions/v1_21/LeavesAntiIllegal-v1_21.iml" />
+      <module fileurl="file://$PROJECT_DIR$/versions/v26_2/LeavesAntiIllegal-v26_2.iml" filepath="$PROJECT_DIR$/versions/v26_2/LeavesAntiIllegal-v26_2.iml" />
     </modules>
   </component>
 </project>

@@ -39,7 +39,7 @@
   };
 
   Object.assign(translations['zh-CN'], {
-    '文档中心 | LeavesAntiIllegal 3.0.0': 'Documentation | LeavesAntiIllegal 3.0.0',
+    '文档中心 | LeavesAntiIllegal 3.1.0': 'Documentation | LeavesAntiIllegal 3.1.0',
     'LeavesAntiIllegal文档中心：服主部署手册与开发者技术参考': 'LeavesAntiIllegal documentation: server administration and developer references',
     '从部署到扩展，快速了解 LeavesAntiIllegal': 'Learn LeavesAntiIllegal from deployment to extension',
     '面向 Leaves 1.21.10 / 1.21.11 的违禁物品扫描插件，覆盖在线玩家、已加载容器与离线玩家数据。': 'An illegal-item scanner for Leaves 1.21.10 / 1.21.11, covering online players, loaded containers, and offline player data.',
@@ -56,12 +56,12 @@
     '先演练离线扫描': 'Practice offline scanning first', '首次部署建议启用': 'Enable', '确认日志后再写回。': 'and only write changes after reviewing the logs.',
     '输出': 'Output', '需要 1.21.11 兼容编译？': 'Need a 1.21.11 compatibility build?', '项目与上游资源': 'Project resources',
     '功能、安装与迁移概览': 'Features, installation, and migration overview', '核心安装与运行参考': 'Server installation and runtime reference', 'API 与上游源码': 'API and upstream source',
-    'LeavesAntiIllegal 3.0.0 · 文档中心': 'LeavesAntiIllegal 3.0.0 · Documentation', '最后更新：2026-08-15': 'Last updated: 2026-08-15',
+    'LeavesAntiIllegal 3.1.0 · 文档中心': 'LeavesAntiIllegal 3.1.0 · Documentation', '最后更新：2026-08-15': 'Last updated: 2026-08-15',
 
-    '服主手册 | LeavesAntiIllegal': 'Server Owner Guide | LeavesAntiIllegal', 'LeavesAntiIllegal 3.0.0 服主安装、配置、迁移与恢复手册': 'LeavesAntiIllegal 3.0.0 server installation, configuration, migration, and recovery guide',
+    '服主手册 | LeavesAntiIllegal': 'Server Owner Guide | LeavesAntiIllegal', 'LeavesAntiIllegal 3.1.0 服主安装、配置、迁移与恢复手册': 'LeavesAntiIllegal 3.1.0 server installation, configuration, migration, and recovery guide',
     '运维参考 / Server owner guide': 'Operations reference / Server owner guide', 'LeavesAntiIllegal 服主手册': 'LeavesAntiIllegal Server Owner Guide',
     '用于部署、配置和维护 Leaves 1.21.10 / 1.21.11 上的在线玩家、已加载容器与离线玩家数据扫描。': 'Deploy, configure, and maintain online-player, loaded-container, and offline-player scanning on Leaves 1.21.10 / 1.21.11.',
-    '配置版本 3': 'Config version 3', '插件版本 3.0.0': 'Plugin version 3.0.0', '共 12 个章节': '12 sections',
+    '配置版本 3': 'Config version 3', '插件版本 3.1.0': 'Plugin version 3.1.0', '共 12 个章节': '12 sections',
     '没有匹配的章节，请尝试材料名、配置键或命令。': 'No matching sections. Try a material name, configuration key, or command.',
     '先确认运行环境': 'Confirm the runtime environment', '此版本只以 Leaves 的标准 Bukkit 主线程模型为目标，不再使用 Folia 区域调度器。插件已分别通过 Leaves 1.21.10 与 1.21.11 API 编译，服务器必须使用 Java 21。': 'This version targets the standard Bukkit main-thread model and no longer uses Folia region schedulers. The plugin was compiled against Leaves 1.21.10 and 1.21.11 APIs, and the server must run Java 21.',
     '在线数据': 'Online data', '背包、盔甲、副手、光标和末影箱。': 'Inventory, armor, off-hand, cursor, and ender chest.',
@@ -90,7 +90,7 @@
     '常见问题': 'Common issues', '插件未加载或显示红色': 'Plugin does not load or appears red', '离线扫描没有启动': 'Offline scanning did not start', '合法物品被删除': 'A legitimate item was removed', '配置重载后没有生效': 'Configuration changes did not take effect after reload',
     '正式上线检查表': 'Production launch checklist', '插件已经注册bStats': 'bStats registration', '数据共享': 'Data sharing', 'LeavesAntiIllegal· 服主手册': 'LeavesAntiIllegal · Server Owner Guide',
 
-    '开发者文档 | LeavesAntiIllegal 3.0.0': 'Developer Guide | LeavesAntiIllegal 3.0.0', '开发者文档 · 3.0.0': 'Developer Guide · 3.0.0', 'LeavesAntiIllegal 开发者文档': 'LeavesAntiIllegal Developer Guide',
+    '开发者文档 | LeavesAntiIllegal 3.1.0': 'Developer Guide | LeavesAntiIllegal 3.1.0', '开发者文档 · 3.1.0': 'Developer Guide · 3.1.0', 'LeavesAntiIllegal 开发者文档': 'LeavesAntiIllegal Developer Guide',
     '说明从 Folia 调度模型迁移到 Leaves/Bukkit 后的模块边界、线程所有权、离线 NBT 写入协议和双版本构建方法。': 'Explains module boundaries, thread ownership, offline NBT write-back, and compatibility builds after migrating from Folia scheduling to Leaves/Bukkit.',
     '兼容契约': 'Compatibility contract', '维度': 'Dimension', '约束': 'Constraint', '实现': 'Implementation', '服务端': 'Server', '线程': 'Threading', '离线 NBT': 'Offline NBT', '插件标识': 'Plugin identity',
     '不是 Folia 双平台插件': 'This is not a dual Folia plugin', '总体架构': 'Architecture', '触发源': 'Triggers', '事件、定时任务、命令、低峰窗口': 'Events, scheduled tasks, commands, off-peak windows', '数据适配': 'Data adapters', '规则判定': 'Rule checks', '处置与审计': 'Remediation and auditing',
@@ -101,7 +101,7 @@
     '已加载容器扫描': 'Loaded container scanning', '离线数据流水线': 'Offline data pipeline', '窗口检查': 'Window check', '主线程快照': 'Main-thread snapshot', '异步批处理': 'Async batch', '事务式写回': 'Transactional write-back',
     'NBT 兼容层': 'NBT compatibility layer', '语义': 'Meaning', '现代字段': 'Modern field', '旧字段': 'Legacy field', '规则快照与判定顺序': 'Rule snapshot and check order',
     '材料黑名单': 'Material blacklist', '附魔等级': 'Enchantment level', '耐久': 'Durability', '堆叠': 'Stack size', '属性': 'Attributes', '不可破坏': 'Unbreakable', '源码索引': 'Source map', '职责': 'Responsibility', '主要协作者': 'Main collaborators',
-    '构建与依赖': 'Build and dependencies', '发布行为': 'Release behavior', '扩展时必须保留的约束': 'Constraints to preserve when extending', '增加一种在线判定': 'Add an online check', '增加一种扫描来源': 'Add a scan source', '修改离线写回': 'Modify offline write-back', 'bStats上报': 'bStats reporting', '按照bStats要求添加相关内容': 'Add the required bStats integration', '验证与发布': 'Verification and release', '最后更新：2026-08-15 · API 来源见': 'Last updated: 2026-08-15 · API source:', 'LeavesAntiIllegal 3.0.0 · 开发者文档': 'LeavesAntiIllegal 3.0.0 · Developer Guide',
+    '构建与依赖': 'Build and dependencies', '发布行为': 'Release behavior', '扩展时必须保留的约束': 'Constraints to preserve when extending', '增加一种在线判定': 'Add an online check', '增加一种扫描来源': 'Add a scan source', '修改离线写回': 'Modify offline write-back', 'bStats上报': 'bStats reporting', '按照bStats要求添加相关内容': 'Add the required bStats integration', '验证与发布': 'Verification and release', '最后更新：2026-08-15 · API 来源见': 'Last updated: 2026-08-15 · API source:', 'LeavesAntiIllegal 3.1.0 · 开发者文档': 'LeavesAntiIllegal 3.1.0 · Developer Guide',
     '离线扫描、已加载容器、低峰窗口和文件保护均是新版字段。直接覆盖会让缺失项回落到代码默认值，但你会失去完整注释，也不便于审计实际行为。': 'Offline scanning, loaded containers, off-peak windows, and file protection are new settings. Replacing the file directly falls back to code defaults for missing fields and removes the comments needed to audit behavior.',
     '嵌套扫描默认最多 3 层，覆盖潜影盒、带库存的方块状态物品和收纳袋。增加深度会提高恶意复杂 NBT 的处理成本。': 'Nested scanning is limited to three levels by default and covers shulker boxes, block-state inventory items, and bundles. Increasing the depth raises the cost of processing complex malicious NBT.',
     '发行包中的': 'The release package\'s', '已为每个节点、字段和列表项提供中文解释、默认值与示例。以下是运维时最常调整的参数。': 'documents every node, field, and list item with defaults and examples. The following settings are adjusted most often.',
@@ -197,11 +197,47 @@
     '依赖': 'Dependency', '范围': 'Scope', '在': 'in', '返回可审计的中文原因，不要直接在规则函数中删除物品。': 'Return an auditable reason; do not delete items directly inside the rule function.', '若离线也应生效，在': 'If it should also apply offline, add it to',
     'Bukkit 活对象必须在主线程获取和修改。': 'Live Bukkit objects must be obtained and modified on the main thread.', '保留“按 UUID 加锁 → 再检查保护 → 备份 → 临时文件 → 原子替换”的顺序。': 'Keep the order: lock by UUID, recheck protection, back up, write a temporary file, and replace atomically.',
     '根据bStats提供的指示，添加了类': 'Following the bStats instructions, add the class', '（主类）的': 'in the main class', '添加上报相关代码': 'and add the reporting code', 'JAR 不包含 Leaves API，但包含已重定位的 Querz NBT 类。': 'The JAR does not include the Leaves API, but it includes relocated Querz NBT classes.',
-    '# 发布基线\nmvn clean package\n# => target/LeavesAntiIllegal-3.0.0.jar\n\n# 1.21.11 兼容编译\nmvn -Pleaves-1.21.11 clean package\n# => target/LeavesAntiIllegal-3.0.0.jar': '# Release baseline\nmvn clean package\n# => target/LeavesAntiIllegal-3.0.0.jar\n\n# 1.21.11 compatibility build\nmvn -Pleaves-1.21.11 clean package\n# => target/LeavesAntiIllegal-3.0.0.jar',
-    'LeavesAntiIllegal 3.0.0 服主安装、配置、迁移与恢复手册': 'LeavesAntiIllegal 3.0.0 server installation, configuration, migration, and recovery guide',
+    '# 发布基线\nmvn clean package\n# => target/LeavesAntiIllegal-3.1.0.jar\n\n# 1.21.11 兼容编译\nmvn -Pleaves-1.21.11 clean package\n# => target/LeavesAntiIllegal-3.1.0.jar': '# Release baseline\nmvn clean package\n# => target/LeavesAntiIllegal-3.1.0.jar\n\n# 1.21.11 compatibility build\nmvn -Pleaves-1.21.11 clean package\n# => target/LeavesAntiIllegal-3.1.0.jar',
+    'LeavesAntiIllegal 3.1.0 服主安装、配置、迁移与恢复手册': 'LeavesAntiIllegal 3.1.0 server installation, configuration, migration, and recovery guide',
     '配置、备份、命令…': 'Configuration, backups, commands...', '文档目录': 'Documentation contents', '物品扫描覆盖流程': 'Item scanning coverage flow',
-    'LeavesAntiIllegal 3.0.0 架构、线程、构建与扩展文档': 'LeavesAntiIllegal 3.0.0 architecture, threading, build, and extension guide', '线程、NBT、构建…': 'Threading, NBT, builds...',
+    'LeavesAntiIllegal 3.1.0 架构、线程、构建与扩展文档': 'LeavesAntiIllegal 3.1.0 architecture, threading, build, and extension guide', '线程、NBT、构建…': 'Threading, NBT, builds...',
     '插件数据流': 'Plugin data flow', '插件启动流程': 'Plugin startup flow', '离线文件扫描流程': 'Offline file scanning flow'
+  });
+
+  Object.assign(translations['zh-CN'], {
+    '面向 Minecraft 1.20 至 26.2 Bukkit API 服务端的违禁物品扫描插件，覆盖在线玩家、已加载容器与离线玩家数据。': 'An illegal-item scanner for Minecraft 1.20 through 26.2 Bukkit API servers, covering online players, loaded containers, and offline player data.',
+    '使用 Java 17 或更高版本启动 1.20 至 26.2 的 Bukkit API 服务端。': 'Run a Bukkit API server from 1.20 through 26.2 with Java 17 or newer.',
+    '需要指定 API 基线？': 'Need a specific API baseline?',
+    '用于部署、配置和维护 Minecraft 1.20 至 26.2 Bukkit API 服务端上的在线玩家、已加载容器与离线玩家数据扫描。': 'Deploy, configure, and maintain online-player, loaded-container, and offline-player scanning on Minecraft 1.20 through 26.2 Bukkit API servers.',
+    '此版本以标准 Bukkit 主线程模型为目标，不再使用 Folia 区域调度器。插件以 Bukkit API 1.20.1 编译，可运行于 1.20 至 26.2 的 Bukkit API 兼容服务端，服务器需要 Java 17 或更高版本。': 'This version targets the standard Bukkit main-thread model and no longer uses Folia region schedulers. It is compiled against Bukkit API 1.20.1 and runs on compatible Bukkit API servers from 1.20 through 26.2. The server must use Java 17 or newer.',
+    '使用 Java 17 或更高版本，核心版本为 Minecraft 1.20 至 26.2 的 Bukkit API 兼容服务端。': 'Use Java 17 or newer with a Minecraft 1.20 through 26.2 server compatible with the Bukkit API.',
+    '确认服务端版本在 1.20 至 26.2 范围内，并使用 Java 17 或更高版本。': 'Confirm that the server version is within 1.20 through 26.2 and uses Java 17 or newer.',
+    '服务器版本为 1.20 至 26.2，运行 Java 17 或更高版本。': 'The server version is 1.20 through 26.2 and runs Java 17 or newer.',
+    '代码以 Spigot Bukkit API 1.20.1 为发布基线。线上产物不调用任何核心私有实现，只依赖 Bukkit/Paper 公开类型和 Bukkit 调度器，因此可运行于 1.20 至 26.2 的兼容服务端。': 'The release baseline is Spigot Bukkit API 1.20.1. The artifact calls no server-private implementation and uses only public Bukkit/Paper types and the Bukkit scheduler, so it runs on compatible servers from 1.20 through 26.2.',
+    '运行与编译均为 17+': 'Runtime and compilation use Java 17+', '以 Spigot API 1.20.1 编译，向前兼容公共 API': 'Compiled against Spigot API 1.20.1 with forward compatibility through the public API',
+    '属性检查不依赖核心私有实现，通过 Bukkit 属性键映射阈值，同时接受': 'Attribute checks do not depend on server-private implementations. Limits are mapped through Bukkit attribute keys and also accept',
+    'Maven 默认解析 Spigot Bukkit API 1.20.1，使用 Java 17 编译。运行时由 1.20 至 26.2 的兼容服务端提供 Bukkit API，不将服务端 API 打包进插件。': 'Maven resolves Spigot Bukkit API 1.20.1 by default and compiles with Java 17. Compatible servers from 1.20 through 26.2 provide Bukkit at runtime; server APIs are not bundled.',
+    '# 发布基线\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar\n\n# 兼容 1.20 - 26.2 的统一产物\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar': '# Release baseline\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar\n\n# Unified artifact for 1.20 - 26.2\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar',
+    '默认构建通过 Spigot Bukkit API 1.20.1 编译。': 'The default build compiles against Spigot Bukkit API 1.20.1.',
+    '同一份 Java 17 字节码面向 1.20 至 26.2 的 Bukkit API 兼容服务端运行。': 'The same Java 17 bytecode runs on Bukkit API-compatible servers from 1.20 through 26.2.',
+    'JAR 不包含 Bukkit API，但包含已重定位的 Querz NBT 类和版本实现。': 'The JAR does not include the Bukkit API, but includes relocated Querz NBT classes and version implementations.',
+    '在隔离的 1.20、1.21 和 26.2 测试服完成启动、重载、玩家扫描、容器扫描和离线备份恢复。': 'Complete startup, reload, player scanning, container scanning, and offline backup recovery on isolated 1.20, 1.21, and 26.2 test servers.',
+    '发布以 Bukkit API 1.20.1 编译的统一产物。不要直接调用某个核心的私有类；若未来 Bukkit API 删除或改变公共方法，应通过反射适配或拆分版本适配层。': 'Publish the unified artifact compiled against Bukkit API 1.20.1. Do not call server-private classes directly; if Bukkit changes a public method, use reflection or split the version adapter.',
+    '版本实现位于': 'Version implementations are located in', '多版本构建': 'Multi-version build',
+    '构建使用 Spigot 官方快照仓库。版本实现位于 <code>versions/v1_20_1</code>、<code>versions/v1_21</code> 和 <code>versions/v26_2</code>，CI 应分别编译这些模块并重新组装统一 JAR。': 'The build uses the official Spigot snapshot repository. Version implementations are in <code>versions/v1_20_1</code>, <code>versions/v1_21</code>, and <code>versions/v26_2</code>; CI should compile these modules and assemble the unified JAR.',
+    '构建使用 Spigot 官方快照仓库。版本实现位于': 'The build uses the official Spigot snapshot repository. Version implementations are in',
+    '，CI 应分别编译这些模块并重新组装统一 JAR。': '; CI should compile these modules and assemble the unified JAR.'
+  });
+
+  Object.assign(translations['zh-CN'], {
+    '文档中心 | LeavesAntiIllegal 3.1.0': 'Documentation | LeavesAntiIllegal 3.1.0',
+    'LeavesAntiIllegal 3.1.0 · 文档中心': 'LeavesAntiIllegal 3.1.0 · Documentation',
+    'LeavesAntiIllegal 3.1.0 服主安装、配置、迁移与恢复手册': 'LeavesAntiIllegal 3.1.0 server installation, configuration, migration, and recovery guide',
+    '插件版本 3.1.0': 'Plugin version 3.1.0',
+    '开发者文档 | LeavesAntiIllegal 3.1.0': 'Developer Guide | LeavesAntiIllegal 3.1.0',
+    '开发者文档 · 3.1.0': 'Developer Guide · 3.1.0',
+    'LeavesAntiIllegal 3.1.0 · 开发者文档': 'LeavesAntiIllegal 3.1.0 · Developer Guide',
+    '# 发布基线\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar\n\n# 兼容 1.20 - 26.2 的统一产物\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar': '# Release baseline\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar\n\n# Unified artifact for 1.20 - 26.2\nmvn clean package\n# => plugin/target/LeavesAntiIllegal-3.1.0.jar'
   });
 
   const translateText = (value, targetLanguage) => {

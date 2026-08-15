@@ -1,4 +1,4 @@
-image: docker.xuanyuan.me/library/maven:3.9.16-eclipse-temurin-17
+image: docker.1ms.run/library/maven:3.9.9-eclipse-temurin-17
 
 stages:
   - clean
@@ -44,7 +44,7 @@ build:
 
 publish_modrinth:
   stage: publish
-  image: docker.xuanyuan.me/library/alpine:3.20
+  image: docker.1ms.run/library/alpine:3.20
   needs:
     - job: build
       artifacts: true

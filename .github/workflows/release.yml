@@ -1,0 +1,133 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  MAVEN_VERSION: '3.9.16'
+  JAVA_VERSION: '17'
+
+jobs:
+  clean:
+    name: Clean
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Maven
+        shell: bash
+        run: |
+          set -euo pipefail
+          maven_dir="$RUNNER_TEMP/apache-maven-${MAVEN_VERSION}"
+          curl --fail --location --retry 3 \
+            "https://mirrors.aliyun.com/apache/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+            --output "$RUNNER_TEMP/apache-maven.tar.gz"
+          tar -xzf "$RUNNER_TEMP/apache-maven.tar.gz" -C "$RUNNER_TEMP"
+          echo "$maven_dir/bin" >> "$GITHUB_PATH"
+
+      - name: Run Maven clean
+        shell: bash
+        run: mvn --batch-mode --errors --show-version -s .mvn/settings.xml -Drevision="$(tr -d '\r\n' < version.txt)" clean
+
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    needs: clean
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Maven
+        shell: bash
+        run: |
+          set -euo pipefail
+          maven_dir="$RUNNER_TEMP/apache-maven-${MAVEN_VERSION}"
+          curl --fail --location --retry 3 \
+            "https://mirrors.aliyun.com/apache/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+            --output "$RUNNER_TEMP/apache-maven.tar.gz"
+          tar -xzf "$RUNNER_TEMP/apache-maven.tar.gz" -C "$RUNNER_TEMP"
+          echo "$maven_dir/bin" >> "$GITHUB_PATH"
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: echo "version=$(tr -d '\r\n' < version.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Build package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mvn --batch-mode --errors --show-version -s .mvn/settings.xml \
+            -Drevision="${{ steps.version.outputs.version }}" clean package -DskipTests
+          test -f "plugin/target/LeavesAntiIllegal-${{ steps.version.outputs.version }}.jar"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LeavesAntiIllegal-${{ steps.version.outputs.version }}
+          path: plugin/target/LeavesAntiIllegal-*.jar
+          if-no-files-found: error
+
+  release:
+    name: Create Tag and GitHub Release
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Read release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(tr -d '\r\n' < version.txt)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: LeavesAntiIllegal-${{ steps.metadata.outputs.version }}
+          path: plugin/target
+
+      - name: Create tag and publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.metadata.outputs.version }}"
+          tag="v${version}"
+          file="plugin/target/LeavesAntiIllegal-${version}.jar"
+          if git ls-remote --exit-code origin "refs/tags/${tag}" >/dev/null 2>&1; then
+            echo "Tag ${tag} already exists. Update version.txt before publishing again."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag --annotate "$tag" "$GITHUB_SHA" --message "LeavesAntiIllegal ${version}"
+          git push origin "$tag"
+          gh release create "$tag" "$file" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "LeavesAntiIllegal ${version}" \
+            --notes-file Description.txt

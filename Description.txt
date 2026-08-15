@@ -1,1 +1,1 @@
-跨版本 Bukkit 兼容构建，支持 Minecraft 1.20 至 26.2，并按服务端版本加载对应适配器。
+Cross-version Bukkit compatibility build, supporting Minecraft 1.20 to 26.2, and loads the corresponding adapter based on the server version. This version is automatically built via GitLab CI/CD; if you can't download it or run into other issues, please report them promptly.

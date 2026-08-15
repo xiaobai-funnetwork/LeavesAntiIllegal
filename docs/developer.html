@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LeavesAntiIllegal 2.0.0 架构、线程、构建与扩展文档">
-  <title>开发者文档 | LeavesAntiIllegal 2.0.0</title>
+  <meta name="description" content="LeavesAntiIllegal 2.1.0 架构、线程、构建与扩展文档">
+  <title>开发者文档 | LeavesAntiIllegal 2.1.0</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
+  <style>
+    #bStats {
+    }
+  </style>
 </head>
 <body>
   <button class="nav-toggle" type="button" aria-label="打开目录" aria-controls="sidebar" aria-expanded="false">☰</button>
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="index.html" aria-label="返回文档首页">
       <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 2.0.0</span></span>
+      <span><strong>LeavesAntiIllegal</strong><span>开发者文档 · 2.1.0</span></span>
     </a>
     <div class="search-wrap">
       <label for="doc-search">筛选本文档</label>
@@ -33,6 +37,7 @@
       <a href="#source-map">源码索引</a>
       <a href="#build">构建与依赖</a>
       <a href="#extension">扩展约束</a>
+      <a href="#bStats">bStats上报</a>
       <a href="#verification">验证与发布</a>
     </nav>
     <div class="sidebar-footer">
@@ -231,6 +236,7 @@
             <thead><tr><th>文件</th><th>职责</th><th>主要协作者</th></tr></thead>
             <tbody>
               <tr><td><code>LeavesAntiIllegalPlugin.java</code></td><td>生命周期、任务编排、规则快照、玩家数据保护</td><td>全部模块</td></tr>
+              <tr><td><code>Metrics.java</code></td><td>bStats状态上报功能类</td><td>主类</td></tr>
               <tr><td><code>ItemChecker.java</code></td><td>在线 ItemStack/Inventory 判定、递归与通知</td><td>监听器、两个扫描器</td></tr>
               <tr><td><code>listener/PlayerListener.java</code></td><td>玩家事件和登录/退出保护</td><td>主类、ItemChecker</td></tr>
               <tr><td><code>listener/InventoryListener.java</code></td><td>库存交互拦截与开关库存检查</td><td>ItemChecker</td></tr>
@@ -246,6 +252,7 @@
           <pre id="package-tree"><code>dev.leavesantiillegal
 ├── LeavesAntiIllegalPlugin
 ├── ItemChecker
+├── Metrics
 ├── command.AntiIllegalCommand
 ├── listener.InventoryListener
 ├── listener.PlayerListener
@@ -302,6 +309,38 @@ mvn -Pleaves-1.21.11 clean package
           <li>保留“按 UUID 加锁 → 再检查保护 → 备份 → 临时文件 → 原子替换”的顺序。</li>
           <li>任何异常都必须清理临时文件，且不能推进成功日期。</li>
           <li>不得异步调用玩家、世界、注册表或插件管理器的活状态。</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="bStats">
+        <span class="section-kicker">13 / bStats</span>
+        <h2>bStats上报</h2>
+        <h3>按照bStats要求添加相关内容</h3>
+        <ul>
+          <li>根据bStats提供的指示，添加了类<code>Metrics.java</code>。来源：https://github.com/Bastian/bstats-metrics/blob/single-file/bukkit/Metrics.java</li>
+          <li>在 <code>LeavesAntiIllegalPlugin</code>（主类）的<code>onEnable()</code>添加上报相关代码</li>
+          <div class="code-block">
+            <div class="code-toolbar"><span>LeavesAntiIllegalPlugin.java/span><button class="copy-button" type="button" data-copy-target="package-tree">复制</button></div>
+            <pre id="java"><code>import org.bukkit.plugin.java.JavaPlugin;
+
+public class ExamplePlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        // You can find the plugin id of your plugins on
+        // the page https://bstats.org/what-is-my-plugin-id
+        int pluginId = 33374;
+        Metrics metrics = new Metrics(this, pluginId);
+
+        // Optional: Add custom charts
+        metrics.addCustomChart(
+            new Metrics.SimplePie("chart_id", () -> "My value")
+        );
+    }
+
+}</code></pre>
+          </div>
+          <li>若离线也应生效，在 <code>NbtItemChecker</code> 增加等价格式解析和合成 NBT 测试。</li>
         </ul>
       </section>
 

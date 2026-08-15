@@ -30,6 +30,8 @@ public final class LeavesAntiIllegalPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        int pluginId = 33374;
+        Metrics metrics = new Metrics(this, pluginId);
         instance = this;
         saveDefaultConfig();
         reloadRuleSnapshot();
@@ -48,6 +50,9 @@ public final class LeavesAntiIllegalPlugin extends JavaPlugin {
         }
         startScanners();
         getLogger().info("LeavesAntiIllegal 已启用 - 兼容 Leaves 1.21.10/1.21.11");
+        metrics.addCustomChart(
+                new Metrics.SimplePie("chart_id", () -> "My value")
+        );
     }
 
     @Override

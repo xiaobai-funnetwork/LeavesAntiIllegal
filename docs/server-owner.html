@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="LeavesAntiIllegal 2.0.0 服主安装、配置、迁移与恢复手册">
-  <title>服主手册 | LeavesAntiIllegal 2.0.0</title>
+  <title>服主手册 | LeavesAntiIllegal</title>
   <link rel="icon" href="assets/leaves-logo.png">
   <link rel="stylesheet" href="assets/docs.css">
 </head>
@@ -13,7 +13,7 @@
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="index.html" aria-label="返回文档首页">
       <img src="assets/leaves-logo.png" alt="Leaves 标识" width="42" height="42">
-      <span><strong>LeavesAntiIllegal</strong><span>服主手册 · 2.0.0</span></span>
+      <span><strong>LeavesAntiIllegal</strong><span>服主手册</span></span>
     </a>
     <div class="search-wrap">
       <label for="doc-search">筛选本文档</label>
@@ -33,6 +33,7 @@
       <a href="#tuning">性能调优</a>
       <a href="#troubleshooting">故障排查</a>
       <a href="#checklist">上线检查表</a>
+      <a href="#bStats">数据共享</a>
     </nav>
     <div class="sidebar-footer">
       <a href="index.html">文档首页</a><a href="developer.html">开发者文档</a><a href="../README.md">README</a>
@@ -49,7 +50,7 @@
           <span class="meta-item ok">Leaves 1.21.10 / 1.21.11</span>
           <span class="meta-item">Java 21</span>
           <span class="meta-item">配置版本 3</span>
-          <span class="meta-item">插件版本 2.0.0</span>
+          <span class="meta-item">插件版本 2.1.0</span>
         </div>
       </div>
     </header>
@@ -67,7 +68,7 @@
           <div class="metric"><strong>离线数据</strong><span>低峰期分批处理各世界 playerdata 文件。</span></div>
         </div>
         <div class="callout warning">
-          <strong>不要在 Folia 上加载 2.0.0</strong>
+          <strong>不要在 Folia 上加载 2.0.0以及更高版本！</strong>
           本版的世界、实体和库存操作按 Leaves/Bukkit 单主线程约束实现。若以后重新切换 Folia，需要恢复区域与实体调度设计，不能只修改 <code>plugin.yml</code>。
         </div>
       </section>
@@ -87,7 +88,7 @@
           <pre id="install-tree"><code>server/
 ├── leaves-1.21.10-or-1.21.11.jar
 ├── plugins/
-│   ├── LeavesAntiIllegal-2.0.0.jar
+│   ├── LeavesAntiIllegal-{version}.jar
 │   └── LeavesAntiIllegal/
 │       ├── config.yml
 │       └── scanner-state.properties
@@ -102,7 +103,7 @@
         <p>项目名、插件名、主类和 Java 包均已更改。Bukkit 会因此使用新的数据目录，旧配置不会自动进入新插件。</p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>项目</th><th>旧版</th><th>2.0.0</th></tr></thead>
+            <thead><tr><th>项目</th><th>旧版</th><th>2.1.0</th></tr></thead>
             <tbody>
               <tr><td>插件名</td><td><code>FoliaAntiIllegal</code></td><td><code>LeavesAntiIllegal</code></td></tr>
               <tr><td>数据目录</td><td><code>plugins/FoliaAntiIllegal/</code></td><td><code>plugins/LeavesAntiIllegal/</code></td></tr>
@@ -114,7 +115,7 @@
         <ol class="step-list">
           <li><strong>关闭服务器</strong>不能热替换插件 JAR，也不要同时保留新旧两份 JAR。</li>
           <li><strong>移走旧 JAR</strong>保留旧数据目录作为参考，但不要让旧插件再次加载。</li>
-          <li><strong>让新版本生成配置</strong>新配置包含 2.0.0 的全部字段和逐行中文注释。</li>
+          <li><strong>让新版本生成配置</strong>新配置包含 2.0.0以及更高版本 的全部字段和逐行中文注释。</li>
           <li><strong>逐项合并业务规则</strong>迁移 <code>banned-materials</code>、附魔/属性阈值、白名单和自定义消息。</li>
           <li><strong>演练后启用写回</strong>不要直接用旧配置覆盖配置版本 3。</li>
         </ol>
@@ -298,7 +299,7 @@
         <h3>插件未加载或显示红色</h3>
         <ul>
           <li>确认服务端是 Leaves 1.21.10 / 1.21.11，并使用 Java 21。</li>
-          <li>确认 JAR 名为 <code>LeavesAntiIllegal-2.0.0.jar</code>，没有同时保留旧版 JAR。</li>
+          <li>确认 JAR 名为 <code>LeavesAntiIllegal-{version}.jar</code>，没有同时保留旧版 JAR。</li>
           <li>从控制台第一段异常开始检查，不要只看最后一行。</li>
         </ul>
         <h3>离线扫描没有启动</h3>
@@ -338,12 +339,20 @@
           <li>已执行 <code>/antiillegal status</code> 和一次指定玩家扫描。</li>
         </ul>
       </section>
+      <section class="doc-section" id="bStats">
+        <span class="section-kicker">13 / 数据共享</span>
+        <h2>插件已经注册bStats</h2>
+        <ul class="bStats">
+          <li>为了统计此插件的使用数据（包括使用次数、用户服务器的地理位置（精确到国家）等非细节信息，我们会将数据推送至bStats平台）</li>
+          <li>请放心，此功能仅仅统计插件的使用次数，和您的服务器所在国家，不会上传其他任何数据</li>
+        </ul>
+      </section>
     </article>
 
     <footer class="doc-footer">
       <div class="doc-footer-inner">
-        <span>LeavesAntiIllegal 2.0.0 · 服主手册</span>
-        <span>最后更新：2026-07-14 · 官方核心资料见 <a href="https://docs.leavesmc.org/">Leaves 文档</a></span>
+        <span>LeavesAntiIllegal· 服主手册</span>
+        <span>最后更新：2026-08-14 · 官方核心资料见 <a href="https://docs.leavesmc.org/">Leaves 文档</a></span>
       </div>
     </footer>
   </main>

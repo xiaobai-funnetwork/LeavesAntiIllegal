@@ -6,6 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for LeavesAntiIllegal" enabled="true">
+        <sourceOutputDir name="target-1.21.11/generated-sources/annotations" />
+        <sourceTestOutputDir name="target-1.21.11/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
         <module name="LeavesAntiIllegal" />
       </profile>
     </annotationProcessing>
